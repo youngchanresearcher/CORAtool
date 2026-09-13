@@ -36,7 +36,7 @@ Imports: graphics, stats, utils
 Suggests: testthat (>= 3.0.0), reticulate, knitr, rmarkdown
 VignetteBuilder: knitr
 Config/testthat/edition: 3
-URL: https://github.com/youngchanresearcher/CORA
-BugReports: https://github.com/youngchanresearcher/CORA/issues
+URL: https://github.com/youngchanresearcher/CORAtool
+BugReports: https://github.com/youngchanresearcher/CORAtool/issues
 NeedsCompilation: no
 RoxygenNote: 7.3.1

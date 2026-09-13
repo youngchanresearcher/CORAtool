@@ -28,7 +28,8 @@ implementation is this package's responsibility, not theirs.
 
 ```r
 # install.packages("remotes")
-remotes::install_github("youngchanresearcher/CORA")   # repository name
+remotes::install_github("youngchanresearcher/CORAtool")
+library(CORAtool)
 ```
 
 ## Usage

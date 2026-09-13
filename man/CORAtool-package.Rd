@@ -44,8 +44,8 @@ duo of Python packages for Combinational Regularity Analysis (CORA).
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/youngchanresearcher/CORA}
-  \item Report bugs at \url{https://github.com/youngchanresearcher/CORA/issues}
+  \item \url{https://github.com/youngchanresearcher/CORAtool}
+  \item Report bugs at \url{https://github.com/youngchanresearcher/CORAtool/issues}
 }
 
 }

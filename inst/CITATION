@@ -13,7 +13,7 @@ bibentry(
   author  = person("Young", "Chan"),
   year    = "2026",
   note    = sprintf("R package version %s", meta$Version),
-  url     = "https://github.com/youngchanresearcher/CORA"
+  url     = "https://github.com/youngchanresearcher/CORAtool"
 )
 
 bibentry(
