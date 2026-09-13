@@ -99,8 +99,13 @@ cora_irredundant_sums(bs)
 ## Which pair of conditions already generates a solution?
 cora_data_mining(mccluskey, c("F1", "F2"), len_of_tuple = 2)
 
-## Widen the search automatically until something is found.
-cora_data_mining(df, "OUT", len_of_tuple = 1, automatic = TRUE)
+## No single condition explains Z on its own ...
+z <- data.frame(A = c(1, 0, 0, 1), B = c(1, 1, 0, 0),
+                C = c(0, 1, 1, 0), Z = c(0, 0, 0, 1))
+cora_data_mining(z, "Z", len_of_tuple = 1)      # every tuple scores zero
+
+## ... so `automatic` widens the search until a pair does.
+cora_data_mining(z, "Z", len_of_tuple = 1, automatic = TRUE)
 
 ## ---------------------------------------------------------------------------
 ## 7. Logic diagrams
