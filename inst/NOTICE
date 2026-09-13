@@ -10,6 +10,10 @@ packages CORA and LOGIGRAM:
   Copyright (C) Zuzana Sebechlebská, Lusine Mkrtchyan and Alrik Thiem
   Licensed under the GNU General Public License v3.0 or later.
 
+This package is an independent implementation. It is not endorsed by the
+authors named above, who are credited here as the authors and copyright
+holders of the work it derives from.
+
 The Petrick solver follows the reference implementation in
 https://github.com/PoliUniLu/petric, which is distributed with CORA under the
 same licence.

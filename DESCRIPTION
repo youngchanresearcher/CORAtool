@@ -23,9 +23,11 @@ Description: Combinational Regularity Analysis (CORA) searches data for INUS
     Multi-value conditions and structures with simple as well as complex
     effects are supported, together with a configurational data-mining search
     and two-level logic diagrams. The package is an R port of the 'Python'
-    packages 'CORA' and 'LOGIGRAM' described in Thiem, Mkrtchyan and
-    Sebechlebská (2023) <doi:10.1186/s12874-023-02120-2>; it computes in
-    plain R and requires no 'Python' installation.
+    packages 'CORA' and 'LOGIGRAM' described in Sebechlebská, Mkrtchyan
+    and Thiem (2023) <doi:10.21105/joss.05019>; it computes in
+    plain R and requires no 'Python' installation. It is an independent
+    implementation and is not endorsed by the authors of the original
+    packages.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true

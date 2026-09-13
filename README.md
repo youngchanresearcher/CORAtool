@@ -17,6 +17,10 @@ This package is an R port of the Python packages
 Lusine Mkrtchyan and Alrik Thiem. **It computes in plain R and requires no
 Python installation.**
 
+It is an independent implementation and is not endorsed by the authors of
+the original packages. Anything it gets wrong is the responsibility of this
+package, not of theirs.
+
 ## Installation
 
 ```r
@@ -142,15 +146,20 @@ nothing else in the package does.
 
 ## Citation
 
-Cite this package and the method it implements. `citation("CORA")` prints
-both entries:
+Cite this package, the method it implements, and the packages it was
+adapted from. `citation("CORA")` prints all three entries:
 
 > Chan, Y. (2026). *CORA: Combinational Regularity Analysis*. R package
 > version 0.1.0.
 
-> Thiem, A., Mkrtchyan, L., & Sebechlebská, Z. (2023). Combinational
+> Thiem, A., Mkrtchyan, L., & Sebechlebská, Z. (2022). Combinational
 > Regularity Analysis (CORA) - a new method for uncovering complex causation
-> in medical and health research. *BMC Medical Research Methodology*, 23, 279.
+> in medical and health research. *BMC Medical Research Methodology*, 22(1),
+> 333.
+
+> Sebechlebská, Z., Mkrtchyan, L., & Thiem, A. (2023). CORA and LOGIGRAM: A
+> duo of Python packages for Combinational Regularity Analysis (CORA).
+> *Journal of Open Source Software*, 8(85), 5019.
 
 ## License
 

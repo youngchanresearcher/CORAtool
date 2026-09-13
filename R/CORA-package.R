@@ -22,13 +22,15 @@
 #' logic diagram.
 #'
 #' @references
-#' Thiem, A., Mkrtchyan, L., and Sebechlebská, Z. (2023). Combinational
+#' Thiem, A., Mkrtchyan, L., and Sebechlebská, Z. (2022). Combinational
 #' Regularity Analysis (CORA) - a new method for uncovering complex causation
-#' in medical and health research. *BMC Medical Research Methodology*, 23, 279.
-#' \doi{10.1186/s12874-023-02120-2}
+#' in medical and health research. *BMC Medical Research Methodology*, 22(1),
+#' 333. \doi{10.1186/s12874-022-01800-9}
 #'
-#' Sebechlebská, Z., Mkrtchyan, L., and Thiem, A. (2023). CORA: A Python
-#' package for Combinational Regularity Analysis.
+#' Sebechlebská, Z., Mkrtchyan, L., and Thiem, A. (2023). CORA and LOGIGRAM: A
+#' duo of Python packages for Combinational Regularity Analysis (CORA).
+#' *Journal of Open Source Software*, 8(85), 5019.
+#' \doi{10.21105/joss.05019}
 #'
 #' @keywords internal
 "_PACKAGE"

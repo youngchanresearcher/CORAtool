@@ -1,10 +1,11 @@
 ## When the article describing this R package appears, replace the Manual
 ## entry below with its bibentry (bibtype = "Article", with journal, volume,
-## pages and doi) and bump the year. Keep the method entry: anyone reporting
-## a CORA analysis has to cite the method, whichever software produced it.
+## pages and doi) and bump the year. Keep the other two entries: reporting a
+## CORA analysis means citing the method and the work this package derives
+## from, whichever software produced the results.
 
-citHeader(paste("To cite CORA in publications, cite this package and the",
-                "method it implements."))
+citHeader(paste("To cite CORA in publications, cite this package, the method",
+                "it implements, and the packages it was adapted from."))
 
 bibentry(
   bibtype = "Manual",
@@ -24,8 +25,24 @@ bibentry(
               person("Lusine", "Mkrtchyan"),
               person("Zuzana", "Sebechlebská")),
   journal = "BMC Medical Research Methodology",
+  year    = "2022",
+  volume  = "22",
+  number  = "1",
+  pages   = "333",
+  doi     = "10.1186/s12874-022-01800-9"
+)
+
+bibentry(
+  bibtype = "Article",
+  title   = paste("CORA and LOGIGRAM: A duo of Python packages for",
+                  "Combinational Regularity Analysis (CORA)"),
+  author  = c(person("Zuzana", "Sebechlebská"),
+              person("Lusine", "Mkrtchyan"),
+              person("Alrik", "Thiem")),
+  journal = "Journal of Open Source Software",
   year    = "2023",
-  volume  = "23",
-  pages   = "279",
-  doi     = "10.1186/s12874-023-02120-2"
+  volume  = "8",
+  number  = "85",
+  pages   = "5019",
+  doi     = "10.21105/joss.05019"
 )
