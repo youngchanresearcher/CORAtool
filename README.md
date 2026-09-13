@@ -107,6 +107,12 @@ cora_logigram("A{1}*B{1}+C{0}<=>F")
 cora_logigram(cora_irredundant_sums(ctx)[[1]])
 ```
 
+A solution writes itself above its own diagram: the implicants, with the `#`
+that marks an essential one, and the coverage and inclusion scores. Pass
+`show_terms = TRUE` to label each gate with the conjunction it forms, `title`
+and `subtitle` to write your own header, or `NA` to either for no header at
+all.
+
 The diagram reader still accepts the upper/lower case notation on input
 (`"A*B+c*A+b<=>F"`), so expressions written by hand or taken from the Python
 implementation can be drawn as they are.

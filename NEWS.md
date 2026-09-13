@@ -14,7 +14,9 @@
 * Configurational data mining (`cora_data_mining()`).
 * `cora_recode()` maps conditions onto `0, 1, 2, ...`; data coded otherwise
   is refused with a message naming the columns to fix.
-* Two-level logic diagrams (`cora_logigram()`, `cora_dnf()`).
+* Two-level logic diagrams (`cora_logigram()`, `cora_dnf()`), with the
+  expression written above the drawing and, optionally, each gate labelled
+  with the conjunction it forms (`title`, `subtitle`, `show_terms`).
 * Optional cross-check against the Python implementation
   (`cora_python_available()`, `cora_compare_python()`).
 * Example data sets `swiss_minaret`, `gross_carvin`, `mccluskey` and
