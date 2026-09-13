@@ -4,7 +4,8 @@ Title: Combinational Regularity Analysis
 Version: 0.1.0
 Authors@R: c(
     person("Young", "Chan", email = "youngchanresearcher@gmail.com",
-           role = c("aut", "cre")),
+           role = c("aut", "cre", "cph"),
+           comment = "Author of the R implementation"),
     person("Zuzana", "Sebechlebska", role = c("aut", "cph"),
            comment = "Author of the original Python implementation"),
     person("Lusine", "Mkrtchyan", role = c("aut", "cph"),
