@@ -1,0 +1,754 @@
+{
+ "amenta_C": {
+  "csv": "/home/user/poliunilu/cora/tests/data/amenta_elliot_2017_5_causes_cs.csv",
+  "kwargs": {
+   "case_col": "CaseID",
+   "inc_score1": 0.5
+  },
+  "outputs": [
+   "C"
+  ]
+ },
+ "amenta_RC": {
+  "csv": "/home/user/poliunilu/cora/tests/data/amenta_elliot_2017_5_causes_cs.csv",
+  "kwargs": {
+   "U": 1,
+   "case_col": "CaseID",
+   "inc_score1": 0.6,
+   "inc_score2": 0.5
+  },
+  "outputs": [
+   "R",
+   "C"
+  ]
+ },
+ "ansorg_multi": {
+  "csv": "/home/user/poliunilu/cora/tests/data/ansorg_2014.csv",
+  "kwargs": {
+   "inc_score1": 0.5,
+   "input_labels": [
+    "ECOFAIL",
+    "STATEFAIL",
+    "REGID",
+    "ECONET"
+   ]
+  },
+  "outputs": [
+   "INTGOV",
+   "ENGIC"
+  ]
+ },
+ "coverage_data_C": {
+  "csv": "/home/user/poliunilu/cora/tests/data/coverage_data.csv",
+  "kwargs": {
+   "case_col": "CaseID",
+   "inc_score1": 0.5
+  },
+  "outputs": [
+   "C"
+  ]
+ },
+ "gross_carvin": {
+  "csv": "/home/user/poliunilu/cora/examples/GrossCarvin2011.csv",
+  "kwargs": {
+   "algorithm": "ON-DC",
+   "case_col": "Case"
+  },
+  "outputs": [
+   "TORT"
+  ],
+  "sep": ";"
+ },
+ "gross_carvin_onoff": {
+  "csv": "/home/user/poliunilu/cora/examples/GrossCarvin2011.csv",
+  "kwargs": {
+   "algorithm": "ON-OFF",
+   "case_col": "Case"
+  },
+  "outputs": [
+   "TORT"
+  ],
+  "sep": ";"
+ },
+ "inc_cut": {
+  "columns": [
+   "A",
+   "B",
+   "C",
+   "O"
+  ],
+  "data": [
+   [
+    1,
+    0,
+    0,
+    1
+   ],
+   [
+    0,
+    1,
+    0,
+    1
+   ],
+   [
+    1,
+    1,
+    1,
+    0
+   ],
+   [
+    1,
+    1,
+    1,
+    1
+   ],
+   [
+    1,
+    1,
+    1,
+    1
+   ]
+  ],
+  "kwargs": {
+   "inc_score1": 0.5
+  },
+  "outputs": [
+   "O"
+  ]
+ },
+ "mccluskey": {
+  "csv": "/home/user/poliunilu/cora/examples/McCluskeyF1F2.csv",
+  "kwargs": {
+   "algorithm": "ON-DC"
+  },
+  "outputs": [
+   "F1",
+   "F2"
+  ],
+  "sep": ";"
+ },
+ "mining_2tuple": {
+  "columns": [
+   "A",
+   "B",
+   "C",
+   "D",
+   "OUT"
+  ],
+  "data": [
+   [
+    1,
+    2,
+    0,
+    1,
+    1
+   ],
+   [
+    1,
+    1,
+    1,
+    0,
+    1
+   ],
+   [
+    0,
+    2,
+    1,
+    0,
+    0
+   ],
+   [
+    0,
+    2,
+    2,
+    0,
+    1
+   ]
+  ],
+  "kwargs": {
+   "inc_score1": 0.5
+  },
+  "mining": 2,
+  "outputs": [
+   "OUT"
+  ]
+ },
+ "mining_basic": {
+  "columns": [
+   "A",
+   "B",
+   "C",
+   "O"
+  ],
+  "data": [
+   [
+    1,
+    0,
+    1,
+    0
+   ],
+   [
+    1,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    1,
+    0,
+    1
+   ],
+   [
+    0,
+    0,
+    1,
+    1
+   ]
+  ],
+  "kwargs": {
+   "algorithm": "ON-DC"
+  },
+  "mining": 3,
+  "outputs": [
+   "O"
+  ]
+ },
+ "mining_basic_onoff": {
+  "columns": [
+   "A",
+   "B",
+   "C",
+   "O"
+  ],
+  "data": [
+   [
+    1,
+    0,
+    1,
+    0
+   ],
+   [
+    1,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    1,
+    0,
+    1
+   ],
+   [
+    0,
+    0,
+    1,
+    1
+   ]
+  ],
+  "kwargs": {
+   "algorithm": "ON-OFF"
+  },
+  "mining": 3,
+  "outputs": [
+   "O"
+  ]
+ },
+ "mining_multi": {
+  "columns": [
+   "A",
+   "B",
+   "C",
+   "Y",
+   "X"
+  ],
+  "data": [
+   [
+    1,
+    0,
+    1,
+    0,
+    1
+   ],
+   [
+    1,
+    0,
+    0,
+    0,
+    1
+   ],
+   [
+    0,
+    1,
+    0,
+    1,
+    1
+   ],
+   [
+    0,
+    0,
+    1,
+    1,
+    0
+   ]
+  ],
+  "kwargs": {
+   "algorithm": "ON-DC"
+  },
+  "mining": 1,
+  "outputs": [
+   "Y",
+   "X"
+  ]
+ },
+ "multi_data2_ON-DC": {
+  "csv": "/home/user/poliunilu/cora/tests/data/Multi_output/data2.csv",
+  "kwargs": {
+   "algorithm": "ON-DC"
+  },
+  "outputs": [
+   "F1",
+   "F2",
+   "F3"
+  ]
+ },
+ "multi_data2_ON-OFF": {
+  "csv": "/home/user/poliunilu/cora/tests/data/Multi_output/data2.csv",
+  "kwargs": {
+   "algorithm": "ON-OFF"
+  },
+  "outputs": [
+   "F1",
+   "F2",
+   "F3"
+  ]
+ },
+ "multi_data3_ON-DC": {
+  "csv": "/home/user/poliunilu/cora/tests/data/Multi_output/data3.csv",
+  "kwargs": {
+   "algorithm": "ON-DC"
+  },
+  "outputs": [
+   "F1",
+   "F2",
+   "F3"
+  ]
+ },
+ "multi_data3_ON-OFF": {
+  "csv": "/home/user/poliunilu/cora/tests/data/Multi_output/data3.csv",
+  "kwargs": {
+   "algorithm": "ON-OFF"
+  },
+  "outputs": [
+   "F1",
+   "F2",
+   "F3"
+  ]
+ },
+ "multi_data4_ON-DC": {
+  "csv": "/home/user/poliunilu/cora/tests/data/Multi_output/data4.csv",
+  "kwargs": {
+   "algorithm": "ON-DC"
+  },
+  "outputs": [
+   "F",
+   "F1",
+   "F2",
+   "F3"
+  ]
+ },
+ "multi_data4_ON-OFF": {
+  "csv": "/home/user/poliunilu/cora/tests/data/Multi_output/data4.csv",
+  "kwargs": {
+   "algorithm": "ON-OFF"
+  },
+  "outputs": [
+   "F",
+   "F1",
+   "F2",
+   "F3"
+  ]
+ },
+ "multi_data5_ON-DC": {
+  "csv": "/home/user/poliunilu/cora/tests/data/Multi_output/data5.csv",
+  "kwargs": {
+   "algorithm": "ON-DC"
+  },
+  "outputs": [
+   "F1",
+   "F2",
+   "F3"
+  ]
+ },
+ "multi_data5_ON-OFF": {
+  "csv": "/home/user/poliunilu/cora/tests/data/Multi_output/data5.csv",
+  "kwargs": {
+   "algorithm": "ON-OFF"
+  },
+  "outputs": [
+   "F1",
+   "F2",
+   "F3"
+  ]
+ },
+ "multi_data6_ON-DC": {
+  "csv": "/home/user/poliunilu/cora/tests/data/Multi_output/data6.csv",
+  "kwargs": {
+   "algorithm": "ON-DC"
+  },
+  "outputs": [
+   "F1",
+   "F2"
+  ]
+ },
+ "multi_data6_ON-OFF": {
+  "csv": "/home/user/poliunilu/cora/tests/data/Multi_output/data6.csv",
+  "kwargs": {
+   "algorithm": "ON-OFF"
+  },
+  "outputs": [
+   "F1",
+   "F2"
+  ]
+ },
+ "multi_value_multi_output": {
+  "columns": [
+   "A",
+   "B",
+   "C",
+   "D",
+   "OUT1",
+   "OUT2",
+   "OUT3"
+  ],
+  "data": [
+   [
+    1,
+    2,
+    0,
+    1,
+    1,
+    2,
+    1
+   ],
+   [
+    1,
+    1,
+    1,
+    0,
+    2,
+    0,
+    0
+   ],
+   [
+    0,
+    2,
+    1,
+    0,
+    0,
+    1,
+    2
+   ],
+   [
+    0,
+    2,
+    2,
+    0,
+    1,
+    1,
+    1
+   ]
+  ],
+  "kwargs": {
+   "algorithm": "ON-OFF"
+  },
+  "outputs": [
+   "OUT1{1,2}",
+   "OUT2{1}",
+   "OUT3{1,0}"
+  ]
+ },
+ "multi_value_multi_output_ondc": {
+  "columns": [
+   "A",
+   "B",
+   "C",
+   "D",
+   "OUT1",
+   "OUT2",
+   "OUT3"
+  ],
+  "data": [
+   [
+    1,
+    2,
+    0,
+    1,
+    1,
+    2,
+    1
+   ],
+   [
+    1,
+    1,
+    1,
+    0,
+    2,
+    0,
+    0
+   ],
+   [
+    0,
+    2,
+    1,
+    0,
+    0,
+    1,
+    2
+   ],
+   [
+    0,
+    2,
+    2,
+    0,
+    1,
+    1,
+    1
+   ]
+  ],
+  "kwargs": {
+   "algorithm": "ON-DC"
+  },
+  "outputs": [
+   "OUT1{1,2}",
+   "OUT2{1}",
+   "OUT3{1,0}"
+  ]
+ },
+ "new_data_cov_y": {
+  "csv": "/home/user/poliunilu/cora/tests/data/new_data_cov.csv",
+  "kwargs": {
+   "case_col": "ID",
+   "input_labels": [
+    "a",
+    "b",
+    "c"
+   ]
+  },
+  "outputs": [
+   "y"
+  ]
+ },
+ "new_data_cov_yz": {
+  "csv": "/home/user/poliunilu/cora/tests/data/new_data_cov.csv",
+  "kwargs": {
+   "case_col": "ID",
+   "input_labels": [
+    "a",
+    "b",
+    "c"
+   ]
+  },
+  "outputs": [
+   "y",
+   "z"
+  ]
+ },
+ "one_data1_ON-DC": {
+  "csv": "/home/user/poliunilu/cora/tests/data/One_output/data1.csv",
+  "kwargs": {
+   "algorithm": "ON-DC"
+  },
+  "outputs": [
+   "F"
+  ]
+ },
+ "one_data1_ON-OFF": {
+  "csv": "/home/user/poliunilu/cora/tests/data/One_output/data1.csv",
+  "kwargs": {
+   "algorithm": "ON-OFF"
+  },
+  "outputs": [
+   "F"
+  ]
+ },
+ "one_data2_ON-DC": {
+  "csv": "/home/user/poliunilu/cora/tests/data/One_output/data2.csv",
+  "kwargs": {
+   "algorithm": "ON-DC"
+  },
+  "outputs": [
+   "F"
+  ]
+ },
+ "one_data2_ON-OFF": {
+  "csv": "/home/user/poliunilu/cora/tests/data/One_output/data2.csv",
+  "kwargs": {
+   "algorithm": "ON-OFF"
+  },
+  "outputs": [
+   "F"
+  ]
+ },
+ "one_data3_ON-DC": {
+  "csv": "/home/user/poliunilu/cora/tests/data/One_output/data3.csv",
+  "kwargs": {
+   "algorithm": "ON-DC"
+  },
+  "outputs": [
+   "F"
+  ]
+ },
+ "one_data3_ON-OFF": {
+  "csv": "/home/user/poliunilu/cora/tests/data/One_output/data3.csv",
+  "kwargs": {
+   "algorithm": "ON-OFF"
+  },
+  "outputs": [
+   "F"
+  ]
+ },
+ "one_data4_ON-DC": {
+  "csv": "/home/user/poliunilu/cora/tests/data/One_output/data4.csv",
+  "kwargs": {
+   "algorithm": "ON-DC"
+  },
+  "outputs": [
+   "F"
+  ]
+ },
+ "one_data4_ON-OFF": {
+  "csv": "/home/user/poliunilu/cora/tests/data/One_output/data4.csv",
+  "kwargs": {
+   "algorithm": "ON-OFF"
+  },
+  "outputs": [
+   "F"
+  ]
+ },
+ "one_data5_ON-DC": {
+  "csv": "/home/user/poliunilu/cora/tests/data/One_output/data5.csv",
+  "kwargs": {
+   "algorithm": "ON-DC"
+  },
+  "outputs": [
+   "F"
+  ]
+ },
+ "one_data5_ON-OFF": {
+  "csv": "/home/user/poliunilu/cora/tests/data/One_output/data5.csv",
+  "kwargs": {
+   "algorithm": "ON-OFF"
+  },
+  "outputs": [
+   "F"
+  ]
+ },
+ "readme_binary": {
+  "columns": [
+   "A",
+   "B",
+   "C",
+   "OUT"
+  ],
+  "data": [
+   [
+    1,
+    1,
+    0,
+    1
+   ],
+   [
+    0,
+    0,
+    1,
+    1
+   ],
+   [
+    1,
+    0,
+    1,
+    0
+   ],
+   [
+    0,
+    1,
+    0,
+    1
+   ]
+  ],
+  "outputs": [
+   "OUT"
+  ]
+ },
+ "readme_binary_onoff": {
+  "columns": [
+   "A",
+   "B",
+   "C",
+   "OUT"
+  ],
+  "data": [
+   [
+    1,
+    1,
+    0,
+    1
+   ],
+   [
+    0,
+    0,
+    1,
+    1
+   ],
+   [
+    1,
+    0,
+    1,
+    0
+   ],
+   [
+    0,
+    1,
+    0,
+    1
+   ]
+  ],
+  "kwargs": {
+   "algorithm": "ON-OFF"
+  },
+  "outputs": [
+   "OUT"
+  ]
+ },
+ "swiss_minaret": {
+  "csv": "/home/user/poliunilu/cora/examples/SwissMinaret.csv",
+  "kwargs": {
+   "algorithm": "ON-OFF"
+  },
+  "outputs": [
+   "X",
+   "M"
+  ]
+ },
+ "swiss_minaret_ondc": {
+  "csv": "/home/user/poliunilu/cora/examples/SwissMinaret.csv",
+  "kwargs": {
+   "algorithm": "ON-DC"
+  },
+  "outputs": [
+   "X",
+   "M"
+  ]
+ },
+ "testdata1_S": {
+  "csv": "/home/user/poliunilu/cora/tests/data/testdata1.csv",
+  "kwargs": {
+   "case_col": "Case"
+  },
+  "outputs": [
+   "S"
+  ]
+ }
+}

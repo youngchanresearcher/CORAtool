@@ -1,0 +1,38 @@
+Package: CORA
+Type: Package
+Title: Combinational Regularity Analysis
+Version: 0.1.0
+Authors@R: c(
+    person("Young", "Chan", email = "youngchanresearcher@gmail.com",
+           role = c("aut", "cre")),
+    person("Zuzana", "Sebechlebska", role = c("aut", "cph"),
+           comment = "Author of the original Python implementation"),
+    person("Lusine", "Mkrtchyan", role = c("aut", "cph"),
+           comment = "Author of the original Python implementation"),
+    person("Alrik", "Thiem", role = c("aut", "cph"),
+           comment = "Author of the original Python implementation")
+    )
+Description: Combinational Regularity Analysis (CORA) searches data for INUS
+    structures, that is, cause-effect relations marked by conjunctivity and
+    disjunctivity, using Boolean minimisation algorithms borrowed from
+    switching circuit analysis. Truth tables are minimised either with the
+    classical Quine-McCluskey algorithm over positive and don't care terms or
+    with McCluskey's modified algorithm over positive and negative terms, and
+    the resulting prime implicant charts are solved with Petrick's method.
+    Multi-value conditions and structures with simple as well as complex
+    effects are supported, together with a configurational data-mining search
+    and two-level logic diagrams. The package is an R port of the 'Python'
+    packages 'CORA' and 'LOGIGRAM' described in Thiem, Mkrtchyan and
+    Sebechlebska (2023) <doi:10.1186/s12874-023-02120-2>; it computes in
+    plain R and requires no 'Python' installation.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Depends: R (>= 3.5.0)
+Imports: graphics, stats, utils
+Suggests: testthat (>= 3.0.0), reticulate
+Config/testthat/edition: 3
+URL: https://github.com/youngchanresearcher/CORA
+BugReports: https://github.com/youngchanresearcher/CORA/issues
+NeedsCompilation: no
+RoxygenNote: 7.3.1

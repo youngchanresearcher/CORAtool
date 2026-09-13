@@ -1,0 +1,25 @@
+citHeader("To cite CORA in publications, cite the method and this package.")
+
+bibentry(
+  bibtype = "Article",
+  title   = paste("Combinational Regularity Analysis (CORA) - a new method",
+                  "for uncovering complex causation in medical and health",
+                  "research"),
+  author  = c(person("Alrik", "Thiem"),
+              person("Lusine", "Mkrtchyan"),
+              person("Zuzana", "Sebechlebska")),
+  journal = "BMC Medical Research Methodology",
+  year    = "2023",
+  volume  = "23",
+  pages   = "279",
+  doi     = "10.1186/s12874-023-02120-2"
+)
+
+bibentry(
+  bibtype = "Manual",
+  title   = "CORA: Combinational Regularity Analysis",
+  author  = person("Young", "Chan"),
+  year    = "2026",
+  note    = "R package version 0.1.0, a port of the Python package CORA",
+  url     = "https://github.com/youngchanresearcher/CORA"
+)
