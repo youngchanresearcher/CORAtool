@@ -187,6 +187,15 @@ draw_bubble <- function(x, y, r) {
 #' @param color_and Fill colour of the AND gates.
 #' @param notation `"case"` when a negated literal is written in lower case,
 #'   `"prime"` when it is written with a trailing apostrophe.
+#' @param title Text printed above the diagram, one line per element. The
+#'   default, `NULL`, prints the expression the diagram stands for; for a
+#'   solution object that is the solution itself, essential prime implicants
+#'   still marked with `#`. Pass `NA` to print no title.
+#' @param subtitle A single line printed under the title. The default,
+#'   `NULL`, prints the coverage and inclusion scores when the object drawn
+#'   carries them, and nothing otherwise. Pass `NA` to print no subtitle.
+#' @param show_terms Print each conjunction next to the gate that forms it.
+#'   Useful when the diagram is read on its own, away from the solution.
 #' @param ... Passed to methods.
 #'
 #' @return The parsed diagram, invisibly. Called for the plot it draws.
@@ -197,30 +206,66 @@ draw_bubble <- function(x, y, r) {
 #'
 #' df <- data.frame(A = c(1, 0, 1, 0), B = c(1, 0, 0, 1),
 #'                  C = c(0, 1, 1, 0), OUT = c(1, 1, 0, 1))
-#' cora_logigram(cora_irredundant_sums(cora_context(df, "OUT"))[[1]])
+#' sol <- cora_irredundant_sums(cora_context(df, "OUT"))[[1]]
+#'
+#' ## The solution and its scores are written above the diagram.
+#' cora_logigram(sol)
+#'
+#' ## Each conjunction next to its own gate, and no header.
+#' cora_logigram(sol, title = NA, subtitle = NA, show_terms = TRUE)
 #' @export
 cora_logigram <- function(x, ...) UseMethod("cora_logigram")
+
+## Resolves a header argument: NULL takes the default, NA or FALSE prints
+## nothing, anything else is used as given.
+logigram_header <- function(value, default) {
+  if (is.null(value)) return(default)
+  if (is.logical(value) && length(value) == 1L && (is.na(value) || !value)) {
+    return(NULL)
+  }
+  as.character(value)
+}
+
+## The expression a diagram stands for, spaced out for reading.
+logigram_expression <- function(x) {
+  s <- logigram_clean(x)
+  sprintf("%s  <=>  %s",
+          gsub("+", " + ", logigram_lhs(s), fixed = TRUE),
+          logigram_rhs(s))
+}
+
+fmt_score <- function(v) sprintf("%.3f", v)
 
 #' @rdname cora_logigram
 #' @export
 cora_logigram.default <- function(x, color_or = "lightblue",
                                   color_and = "lemonchiffon",
-                                  notation = c("case", "prime"), ...) {
+                                  notation = c("case", "prime"),
+                                  title = NULL, subtitle = NULL,
+                                  show_terms = FALSE, ...) {
   parsed <- logigram_parse(x, notation = notation)
-  draw_logigram(parsed, color_or = color_or, color_and = color_and)
+  draw_logigram(parsed, color_or = color_or, color_and = color_and,
+                title = logigram_header(title, logigram_expression(x)),
+                subtitle = logigram_header(subtitle, NULL),
+                show_terms = show_terms)
   invisible(parsed)
 }
 
 #' @rdname cora_logigram
 #' @export
-cora_logigram.cora_system <- function(x, ...) {
-  cora_logigram(cora_dnf(x), ...)
+cora_logigram.cora_system <- function(x, title = NULL, subtitle = NULL, ...) {
+  if (is.null(title)) title <- system_title(x)
+  if (is.null(subtitle)) subtitle <- system_subtitle(x)
+  cora_logigram(cora_dnf(x), title = title, subtitle = subtitle, ...)
 }
 
 #' @rdname cora_logigram
 #' @export
-cora_logigram.cora_system_multi <- function(x, ...) {
-  cora_logigram(cora_dnf(x), ...)
+cora_logigram.cora_system_multi <- function(x, title = NULL, subtitle = NULL,
+                                            ...) {
+  if (is.null(title)) title <- system_multi_title(x)
+  if (is.null(subtitle)) subtitle <- system_multi_subtitle(x)
+  cora_logigram(cora_dnf(x), title = title, subtitle = subtitle, ...)
 }
 
 #' @rdname cora_logigram
@@ -230,6 +275,39 @@ cora_logigram.cora_context <- function(x, ...) {
                else cora_irredundant_sums(x)
   if (length(solutions) == 0L) stopf("No irredundant solution was found.")
   cora_logigram(solutions[[1L]], ...)
+}
+
+## Headers for solution objects. Unlike cora_dnf(), these keep the "#" that
+## marks an essential prime implicant, because the header is there to be read.
+system_title <- function(x) {
+  terms <- vapply(x$system, function(i) i$implicant, character(1))
+  sprintf("%s  <=>  %s", paste(terms, collapse = " + "),
+          clean_label(x$output))
+}
+
+system_subtitle <- function(x) {
+  marked <- any(startsWith(
+    vapply(x$system, function(i) i$implicant, character(1)), "#"))
+  sprintf("M%d    Cov. = %s    Inc. = %s%s", x$index,
+          fmt_score(cora_coverage_score(x)),
+          fmt_score(cora_inclusion_score(x)),
+          if (marked) "    (# essential)" else "")
+}
+
+system_multi_title <- function(x) {
+  keep <- vapply(x$system_multiple, function(s) length(s) > 0L, logical(1))
+  vapply(which(keep), function(j) {
+    terms <- vapply(x$system_multiple[[j]], function(i) i$implicant,
+                    character(1))
+    sprintf("%s  <=>  %s", paste(terms, collapse = " + "),
+            clean_label(x$output_labels[[j]]))
+  }, character(1))
+}
+
+system_multi_subtitle <- function(x) {
+  sprintf("System %d    Cov. = %s    Inc. = %s", x$index,
+          fmt_score(cora_coverage_score(x)),
+          fmt_score(cora_inclusion_score(x)))
 }
 
 #' Disjunctive normal form of a solution
@@ -271,7 +349,9 @@ cora_dnf.cora_system_multi <- function(x, ...) {
 }
 
 draw_logigram <- function(parsed, color_or = "lightblue",
-                          color_and = "lemonchiffon") {
+                          color_and = "lemonchiffon",
+                          title = NULL, subtitle = NULL,
+                          show_terms = FALSE) {
   variables <- parsed$variables
   implicants <- parsed$implicants
   outputs <- parsed$outputs
@@ -344,6 +424,13 @@ draw_logigram <- function(parsed, color_or = "lightblue",
   top <- max(c(band_top, or_y + or_h / 2)) + 0.9
   bottom <- min(c(band_top - band_h, or_y - or_h / 2)) - 0.5
 
+  ## Room above the drawing for the expression it stands for.
+  title_cex <- 0.95
+  sub_cex <- 0.78
+  line_h <- 0.52
+  head_h <- length(title) * line_h + (if (length(subtitle)) line_h * 0.85 else 0)
+  if (head_h > 0) head_h <- head_h + 0.35
+
   ## Left boundary of an OR gate at a given height (its back edge is concave).
   or_back_x <- function(k, yy) {
     t <- (yy - or_y[[k]]) / (or_h[[k]] / 2)
@@ -351,11 +438,43 @@ draw_logigram <- function(parsed, color_or = "lightblue",
     or_x + 0.22 * or_w * (1 - t^2)
   }
 
+  term_labels <- if (isTRUE(show_terms)) {
+    vapply(implicants, function(i) i$label, character(1))
+  } else {
+    character(0)
+  }
+
+  left <- bus_x[[1L]] - 0.5
+  right <- or_x + or_w + 2.4
+
   op <- graphics::par(mar = c(0.4, 0.4, 0.4, 0.4))
   on.exit(graphics::par(op), add = TRUE)
   graphics::plot.new()
-  graphics::plot.window(xlim = c(bus_x[[1L]] - 0.5, or_x + or_w + 2.4),
-                        ylim = c(bottom, top), asp = 1)
+  graphics::plot.window(xlim = c(left, right),
+                        ylim = c(bottom, top + head_h), asp = 1)
+
+  ## Term labels and the header can run past the gates, so measure them
+  ## against a provisional window and widen the real one to fit. Widening
+  ## only shrinks text in user units, so one pass is enough.
+  need <- right
+  if (length(term_labels)) {
+    need <- max(need,
+                gate_x + max(graphics::strwidth(term_labels, cex = 0.72)) + 0.6)
+  }
+  if (length(title)) {
+    need <- max(need, left + 0.1 + 0.4 +
+                  max(graphics::strwidth(title, cex = title_cex, font = 2,
+                                         family = "mono")))
+  }
+  if (length(subtitle)) {
+    need <- max(need, left + 0.1 + 0.4 +
+                  max(graphics::strwidth(subtitle, cex = sub_cex)))
+  }
+  if (need > right) {
+    right <- need
+    graphics::plot.window(xlim = c(left, right),
+                          ylim = c(bottom, top + head_h), asp = 1)
+  }
 
   for (j in seq_len(nv)) {
     graphics::segments(bus_x[[j]], bottom + 0.15, bus_x[[j]], top - 0.5,
@@ -401,6 +520,15 @@ draw_logigram <- function(parsed, color_or = "lightblue",
       graphics::segments(gate_x + gate_w, row_y[[i]], jog_x[[i]], row_y[[i]])
     }
 
+    if (length(term_labels)) {
+      ## Above the gate for a conjunction, above the wire for a lone literal.
+      label_y <- if (single) ys[[1L]] + 0.16 else
+        row_y[[i]] + max(0.7, (n_lit[[i]] + 0.4) * lit_gap) / 2 + 0.12
+      graphics::text(gate_x, label_y, term_labels[[i]],
+                     adj = c(0, 0), cex = 0.72, col = "grey30",
+                     family = "mono")
+    }
+
     ## Route the implicant into every OR gate it feeds.
     src_y <- if (single) ys[[1L]] else row_y[[i]]
     negated_single <- single &&
@@ -412,6 +540,19 @@ draw_logigram <- function(parsed, color_or = "lightblue",
       trim <- if (negated_single) 2 * bubble_r else 0
       graphics::segments(jog_x[[i]], target, x_gate - trim, target)
       if (negated_single) draw_bubble(x_gate - bubble_r, target, bubble_r)
+    }
+  }
+
+  if (length(title)) {
+    y <- top + head_h - 0.25
+    for (line in title) {
+      graphics::text(left + 0.1, y, line, adj = c(0, 1), cex = title_cex,
+                     font = 2, family = "mono")
+      y <- y - line_h
+    }
+    if (length(subtitle)) {
+      graphics::text(left + 0.1, y - 0.02, subtitle, adj = c(0, 1),
+                     cex = sub_cex, col = "grey35")
     }
   }
 

@@ -15,12 +15,15 @@ cora_logigram(x, ...)
   color_or = "lightblue",
   color_and = "lemonchiffon",
   notation = c("case", "prime"),
+  title = NULL,
+  subtitle = NULL,
+  show_terms = FALSE,
   ...
 )
 
-\method{cora_logigram}{cora_system}(x, ...)
+\method{cora_logigram}{cora_system}(x, title = NULL, subtitle = NULL, ...)
 
-\method{cora_logigram}{cora_system_multi}(x, ...)
+\method{cora_logigram}{cora_system_multi}(x, title = NULL, subtitle = NULL, ...)
 
 \method{cora_logigram}{cora_context}(x, ...)
 }
@@ -40,6 +43,18 @@ A [cora_context()] or a solution from [cora_irredundant_sums()] or
 
 \item{notation}{`"case"` when a negated literal is written in lower case,
 `"prime"` when it is written with a trailing apostrophe.}
+
+\item{title}{Text printed above the diagram, one line per element. The
+default, `NULL`, prints the expression the diagram stands for; for a
+solution object that is the solution itself, essential prime implicants
+still marked with `#`. Pass `NA` to print no title.}
+
+\item{subtitle}{A single line printed under the title. The default,
+`NULL`, prints the coverage and inclusion scores when the object drawn
+carries them, and nothing otherwise. Pass `NA` to print no subtitle.}
+
+\item{show_terms}{Print each conjunction next to the gate that forms it.
+Useful when the diagram is read on its own, away from the solution.}
 }
 \value{
 The parsed diagram, invisibly. Called for the plot it draws.
@@ -55,5 +70,11 @@ cora_logigram("A{1}*B{2}+C{0}<=>F")
 
 df <- data.frame(A = c(1, 0, 1, 0), B = c(1, 0, 0, 1),
                  C = c(0, 1, 1, 0), OUT = c(1, 1, 0, 1))
-cora_logigram(cora_irredundant_sums(cora_context(df, "OUT"))[[1]])
+sol <- cora_irredundant_sums(cora_context(df, "OUT"))[[1]]
+
+## The solution and its scores are written above the diagram.
+cora_logigram(sol)
+
+## Each conjunction next to its own gate, and no header.
+cora_logigram(sol, title = NA, subtitle = NA, show_terms = TRUE)
 }

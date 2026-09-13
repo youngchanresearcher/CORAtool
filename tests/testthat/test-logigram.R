@@ -117,3 +117,54 @@ test_that("the square bracket notation of the QCA package is read too", {
   }, add = TRUE)
   expect_silent(cora_logigram("A[1]*B[2]+C[0]<=>F"))
 })
+
+test_that("the header carries the expression the diagram stands for", {
+  expect_equal(logigram_expression("A{1}*B{2}+C{0}<=>F"),
+               "A{1}*B{2} + C{0}  <=>  F")
+  expect_equal(logigram_expression(c("A*B<=>F1", "c<=>F2")),
+               c("A*B  <=>  F1", "c  <=>  F2"))
+
+  ## NULL takes the default, NA and FALSE suppress it, anything else is used.
+  expect_equal(logigram_header(NULL, "x"), "x")
+  expect_null(logigram_header(NA, "x"))
+  expect_null(logigram_header(FALSE, "x"))
+  expect_equal(logigram_header(c("a", "b"), "x"), c("a", "b"))
+})
+
+test_that("a solution annotates its own diagram", {
+  df <- data.frame(A = c(1, 0, 1, 0, 1, 1, 0, 0),
+                   B = c(1, 0, 0, 1, 1, 0, 1, 0),
+                   C = c(0, 1, 1, 0, 1, 1, 0, 1),
+                   OUT = c(1, 1, 0, 1, 1, 0, 1, 1))
+  sol <- cora_irredundant_sums(cora_context(df, "OUT"))[[1L]]
+
+  ## cora_dnf() strips the essential marker because the parser has no use
+  ## for it; the header keeps it because it is there to be read.
+  expect_false(grepl("#", cora_dnf(sol), fixed = TRUE))
+  expect_true(grepl("#", system_title(sol), fixed = TRUE))
+  expect_true(grepl("<=>  OUT", system_title(sol), fixed = TRUE))
+  expect_match(system_subtitle(sol), "^M1 +Cov\\. = [0-9.]+ +Inc\\. = [0-9.]+")
+  expect_match(system_subtitle(sol), "# essential")
+
+  d2 <- data.frame(A = c(1, 0, 1, 0, 1, 1, 0, 0),
+                   B = c(1, 0, 0, 1, 1, 0, 1, 0),
+                   C = c(0, 1, 1, 0, 1, 1, 0, 1),
+                   O1 = c(1, 1, 0, 1, 1, 0, 1, 1),
+                   O2 = c(0, 1, 1, 0, 1, 1, 0, 1))
+  sys <- cora_irredundant_systems(cora_context(d2, c("O1", "O2")))[[1L]]
+  expect_length(system_multi_title(sys), 2L)
+  expect_match(system_multi_subtitle(sys), "^System 1 ")
+
+  path <- tempfile(fileext = ".pdf")
+  grDevices::pdf(path)
+  on.exit({
+    grDevices::dev.off()
+    unlink(path)
+  }, add = TRUE)
+  expect_silent(cora_logigram(sol))
+  expect_silent(cora_logigram(sol, show_terms = TRUE))
+  expect_silent(cora_logigram(sol, title = NA, subtitle = NA))
+  expect_silent(cora_logigram(sol, title = "custom", subtitle = "line"))
+  expect_silent(cora_logigram(sys, show_terms = TRUE))
+  expect_silent(cora_logigram("A{1}*B{2}+C{0}<=>F", show_terms = TRUE))
+})
