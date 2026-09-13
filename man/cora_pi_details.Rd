@@ -4,10 +4,15 @@
 \alias{cora_pi_details}
 \title{Statistical overview of the prime implicants}
 \usage{
-cora_pi_details(ctx)
+cora_pi_details(ctx, max_solutions = 50)
 }
 \arguments{
 \item{ctx}{A [cora_context()].}
+
+\item{max_solutions}{Largest number of solution columns to build. A chart
+with many prime implicants can have tens of thousands of solutions, and
+one column each is a table nobody can read; the first `max_solutions` are
+kept and a message says how many were left out. `Inf` keeps all of them.}
 }
 \value{
 A data frame with one row per prime implicant holding its coverage

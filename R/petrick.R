@@ -25,9 +25,28 @@ mask_to_idx <- function(m) {
   out
 }
 
+## Number of implicants in a product held as a bit mask.
+mask_size <- function(m) {
+  n <- 0L
+  for (w in m) {
+    while (w != 0L) {
+      n <- n + bitwAnd(w, 1L)
+      w <- bitwShiftR(w, 1L)
+    }
+  }
+  n
+}
+
 ## Boolean multiplication of two sums of products, with absorption
 ## (X + XY = X) applied eagerly so that only minimal products survive.
-boolean_multiply_sets <- function(x, y) {
+##
+## `max_depth` drops products longer than the bound as they are formed. A
+## product never loses an implicant as multiplication continues, so nothing
+## dropped could have come back under the bound: the products that survive
+## are exactly the ones a full multiplication would have produced and then
+## been filtered down to. Pruning early is what keeps a chart with dozens of
+## prime implicants from having to enumerate every irredundant sum first.
+boolean_multiply_sets <- function(x, y, max_depth = NULL) {
   if (length(x) == 0L || length(y) == 0L) return(list())
   maxi <- max(c(unlist(x, use.names = FALSE), unlist(y, use.names = FALSE)))
   nw <- (maxi - 1L) %/% MASK_BITS + 1L
@@ -38,6 +57,7 @@ boolean_multiply_sets <- function(x, y) {
   for (a in xm) {
     for (b in ym) {
       tmp <- bitwOr(a, b)
+      if (!is.null(max_depth) && mask_size(tmp) > max_depth) next
       if (nrow(res) > 0L) {
         rep_tmp <- rep(tmp, each = nrow(res))
         anded <- matrix(bitwAnd(res, rep_tmp), nrow = nrow(res))
@@ -64,6 +84,10 @@ boolean_multiply_sets <- function(x, y) {
 #'
 #' @param coverages A list with one integer vector per prime implicant giving
 #'   the rows that implicant covers.
+#' @param max_depth Optional upper bound on the number of prime implicants a
+#'   sum may contain. The bound is applied while the products are being
+#'   multiplied out rather than to the finished list, which is what makes a
+#'   large chart solvable at all; the sums returned are the same either way.
 #'
 #' @return A list with `essential`, the indices of the prime implicants that
 #'   are the only cover of some row, and `sums`, a list of integer vectors
@@ -72,8 +96,12 @@ boolean_multiply_sets <- function(x, y) {
 #'
 #' @examples
 #' cora_petrick(list(c(1, 2), c(2, 3), c(3, 4)))
+#'
+#' ## Only the sums built from at most two prime implicants.
+#' cora_petrick(list(c(1, 2), c(2, 3), c(3, 4)), max_depth = 2)
 #' @export
-cora_petrick <- function(coverages) {
+cora_petrick <- function(coverages, max_depth = NULL) {
+  if (!is.null(max_depth)) max_depth <- check_count(max_depth, "max_depth")
   if (length(coverages) == 0L) return(list(essential = integer(0), sums = list()))
 
   ## Prime implicants with identical coverage are interchangeable; solve once
@@ -105,7 +133,7 @@ cora_petrick <- function(coverages) {
   ## Multiply the coverage conditions, cheapest first.
   mult_in <- lapply(row_to_impl, function(s) lapply(s, function(i) as.integer(i)))
   mult_in <- mult_in[order(vapply(mult_in, length, integer(1)))]
-  res <- Reduce(boolean_multiply_sets, mult_in)
+  res <- Reduce(function(a, b) boolean_multiply_sets(a, b, max_depth), mult_in)
 
   ## Expand deduplicated solutions back to the original prime implicants.
   sums <- list()

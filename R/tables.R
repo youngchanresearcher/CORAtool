@@ -3,6 +3,10 @@
 #' Statistical overview of the prime implicants
 #'
 #' @param ctx A [cora_context()].
+#' @param max_solutions Largest number of solution columns to build. A chart
+#'   with many prime implicants can have tens of thousands of solutions, and
+#'   one column each is a table nobody can read; the first `max_solutions` are
+#'   kept and a message says how many were left out. `Inf` keeps all of them.
 #'
 #' @return A data frame with one row per prime implicant holding its coverage
 #'   score (`Cov.r`), its inclusion score (`Inc.`) and, for every solution,
@@ -14,7 +18,7 @@
 #'                  C = c(0, 1, 1, 0), OUT = c(1, 1, 0, 1))
 #' cora_pi_details(cora_context(df, "OUT"))
 #' @export
-cora_pi_details <- function(ctx) {
+cora_pi_details <- function(ctx, max_solutions = 50) {
   stopifnot(inherits(ctx, "cora_context"))
   if (!is.null(ctx$details)) return(ctx$details)
   pis <- cora_prime_implicants(ctx)
@@ -40,7 +44,8 @@ cora_pi_details <- function(ctx) {
                            strict = FALSE)
   }
 
-  for (k in seq_along(solutions)) {
+  shown <- trim_solutions(length(solutions), max_solutions, "column")
+  for (k in seq_len(shown)) {
     scores <- per_solution[[k]]
     out[[paste0(prefix, solutions[[k]]$index)]] <- vapply(
       out$PI,
@@ -48,8 +53,24 @@ cora_pi_details <- function(ctx) {
       numeric(1), USE.NAMES = FALSE
     )
   }
-  ctx$details <- out
+  if (shown == length(solutions)) ctx$details <- out
   out
+}
+
+## Every solution is a valid answer, so a table of ten thousand of them is
+## not wrong, only unreadable. Say what was left out rather than deciding
+## silently, and let max_solutions = Inf ask for the whole thing.
+trim_solutions <- function(n, max_solutions, unit) {
+  if (length(max_solutions) != 1L || is.na(max_solutions) || max_solutions < 1) {
+    stopf("`max_solutions` must be a single number of 1 or more, or Inf.")
+  }
+  if (n <= max_solutions) return(n)
+  shown <- as.integer(max_solutions)
+  message(sprintf(paste0(
+    "%d solutions; showing the first %d as one %s each. Pass ",
+    "max_solutions = Inf for all of them, or restrict the search with ",
+    "max_depth."), n, shown, unit))
+  shown
 }
 
 #' Statistical overview of a solution
@@ -90,18 +111,25 @@ cora_system_details <- function(ctx) {
 #'   each system contributes one row per outcome, and the `Output` and
 #'   `System` columns identify them.
 #'
+#' @param max_solutions Largest number of solutions to lay out. A chart with
+#'   many prime implicants can have tens of thousands, so the first
+#'   `max_solutions` are kept and a message says how many were left out.
+#'   `Inf` keeps all of them.
+#'
 #' @examples
 #' df <- data.frame(A = c(1, 0, 1, 0), B = c(1, 0, 0, 1),
 #'                  C = c(0, 1, 1, 0), OUT = c(1, 1, 0, 1))
 #' cora_solutions(cora_context(df, "OUT"))
 #' @export
-cora_solutions <- function(ctx) {
+cora_solutions <- function(ctx, max_solutions = 50) {
   stopifnot(inherits(ctx, "cora_context"))
   pis <- cora_prime_implicants(ctx)
   pi_names <- vapply(pis, function(p) p$implicant, character(1))
 
   if (!ctx$multi_output) {
-    solutions <- cora_irredundant_sums(ctx)
+    all_solutions <- cora_irredundant_sums(ctx)
+    shown <- trim_solutions(length(all_solutions), max_solutions, "row")
+    solutions <- all_solutions[seq_len(shown)]
     mat <- matrix(0L, nrow = length(solutions), ncol = length(pis),
                   dimnames = list(NULL, pi_names))
     for (r in seq_along(solutions)) {
@@ -110,11 +138,13 @@ cora_solutions <- function(ctx) {
       mat[r, pi_names %in% in_sol] <- 1L
     }
     out <- as.data.frame(mat, check.names = FALSE)
-    ctx$solution_dataframe <- out
+    if (shown == length(all_solutions)) ctx$solution_dataframe <- out
     return(out)
   }
 
-  solutions <- cora_irredundant_systems(ctx)
+  all_solutions <- cora_irredundant_systems(ctx)
+  shown <- trim_solutions(length(all_solutions), max_solutions, "block of rows")
+  solutions <- all_solutions[seq_len(shown)]
   n_out <- length(ctx$output_labels)
   mat <- matrix(0L, nrow = length(solutions) * n_out, ncol = length(pis),
                 dimnames = list(NULL, pi_names))

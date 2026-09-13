@@ -4,10 +4,15 @@
 \alias{cora_solutions}
 \title{Solution summary table}
 \usage{
-cora_solutions(ctx)
+cora_solutions(ctx, max_solutions = 50)
 }
 \arguments{
 \item{ctx}{A [cora_context()].}
+
+\item{max_solutions}{Largest number of solutions to lay out. A chart with
+many prime implicants can have tens of thousands, so the first
+`max_solutions` are kept and a message says how many were left out.
+`Inf` keeps all of them.}
 }
 \value{
 A data frame with one column per prime implicant marking, with a 1,

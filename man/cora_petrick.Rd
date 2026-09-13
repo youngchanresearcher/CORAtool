@@ -4,11 +4,16 @@
 \alias{cora_petrick}
 \title{Solve a prime implicant chart with Petrick's method}
 \usage{
-cora_petrick(coverages)
+cora_petrick(coverages, max_depth = NULL)
 }
 \arguments{
 \item{coverages}{A list with one integer vector per prime implicant giving
 the rows that implicant covers.}
+
+\item{max_depth}{Optional upper bound on the number of prime implicants a
+sum may contain. The bound is applied while the products are being
+multiplied out rather than to the finished list, which is what makes a
+large chart solvable at all; the sums returned are the same either way.}
 }
 \value{
 A list with `essential`, the indices of the prime implicants that
@@ -21,4 +26,7 @@ Solve a prime implicant chart with Petrick's method
 }
 \examples{
 cora_petrick(list(c(1, 2), c(2, 3), c(3, 4)))
+
+## Only the sums built from at most two prime implicants.
+cora_petrick(list(c(1, 2), c(2, 3), c(3, 4)), max_depth = 2)
 }

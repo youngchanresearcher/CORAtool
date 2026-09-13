@@ -4,10 +4,21 @@
 \alias{cora_irredundant_systems}
 \title{Irredundant systems of a multi-outcome analysis}
 \usage{
-cora_irredundant_systems(ctx)
+cora_irredundant_systems(
+  ctx,
+  max_depth = NULL,
+  search = c("bounded", "exhaustive")
+)
 }
 \arguments{
 \item{ctx}{A [cora_context()] with more than one outcome.}
+
+\item{max_depth}{Optional upper bound on the number of distinct prime
+implicants a system may contain, as in [cora_irredundant_sums()].}
+
+\item{search}{How `max_depth` is applied, as in [cora_irredundant_sums()].
+`"bounded"` also bounds each outcome's own chart, which is what makes a
+system of several outcomes over a large chart solvable at all.}
 }
 \value{
 A list of systems, of class `cora_systems`.

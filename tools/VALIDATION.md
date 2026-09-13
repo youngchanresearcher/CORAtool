@@ -125,3 +125,53 @@ slower in absolute terms. `"ON-OFF"` returns the same prime implicants in
 full configuration space. **Use `"ON-OFF"` for conditions with many levels.**
 A condition of more than 30 levels is refused under `"ON-DC"`, which is the
 width of the bit mask the reduction step uses; `"ON-OFF"` has no such limit.
+
+
+## What 0.1.1 changed, and what it did not
+
+Four behaviours were chosen for 0.1.1 around what happens when an analysis
+gets large. Three of them change only what is refused or said out loud; one
+changes how implicants are written.
+
+Running the driver over `specs.json` on the code before and after: **41
+scenarios, 251 compared fields, 225 byte-identical, 26 differing only in the
+order literals are written inside a conjunction, none differing in content.**
+
+* **`max_depth` bounds Petrick's method as it runs.** Pruning products longer
+  than the bound as they are formed is exact, because a product never loses
+  an implicant as multiplication continues. Checked against the old
+  filter-afterwards route on randomly generated data: **386 single-outcome
+  and 94 multi-outcome comparisons, no mismatch.** The difference is only
+  ever speed:
+
+  | `bergschlosser`, `PRAET`, ON-OFF | solutions | time |
+  |---|---|---|
+  | unrestricted | 74,524 | 24s |
+  | `max_depth = 8` | 564 | 0.7s |
+  | `max_depth = 7` | 21 | 0.2s |
+
+  A three-outcome system over the same data (87 prime implicants) did not
+  finish at all before; `max_depth = 7` returns in under a second.
+
+  Bounding each outcome's own chart needed care: an outcome with prime
+  implicants but no sum within the bound was at first dropped from the
+  system, which built systems that left that outcome unexplained. The
+  randomised comparison above is what caught it.
+
+* **Literals are written in alphabetical order of the condition.** Previously
+  they followed the order the columns sat in, so the same analysis printed
+  `A{0}*C{1}` or `C{1}*A{0}` depending on how the data frame was assembled.
+
+* **`"ON-DC"` warns above twelve levels on a condition**, and a run with more
+  than ten thousand irredundant solutions says so.
+  `cora_pi_details()` and `cora_solutions()` lay out the first 50 solutions
+  unless asked for more, rather than building a table with tens of thousands
+  of columns.
+
+## A sixth defect in the Python implementation
+
+`get_irredundant_sums(self, max_depth=None)` documents `max_depth` as "a
+positive integer denoting max number of prime implicants in the solution".
+The name appears three times in `cora/prime_implicants.py` — the signature at
+line 1025 and the docstring at lines 1030 and 1037 — and **never in the body
+of the function**. Every value, `0` included, returns the full solution set.

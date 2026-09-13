@@ -9,6 +9,26 @@
 
 MAX_LEVELS <- 30L
 
+## ON-DC merges subsets of a condition's value set, so its cost grows
+## exponentially in the number of levels of a single condition: about 0.2s at
+## twelve levels, 23s at eighteen, and out of reach at thirty. ON-OFF returns
+## the same prime implicants from the observed rows in a fraction of a second
+## at any size, so the only thing to do here is say so before the wait.
+WARN_LEVELS <- 12L
+
+warn_many_levels <- function(levels, labels) {
+  wide <- which(levels > WARN_LEVELS)
+  if (length(wide) == 0L) return(invisible(NULL))
+  warning(sprintf(paste0(
+    "Condition(s) %s have more than %d levels. The \"ON-DC\" algorithm ",
+    "takes exponentially longer as a condition gains levels, and may not ",
+    "finish. Use algorithm = \"ON-OFF\", which returns the same prime ",
+    "implicants from the observed rows."),
+    paste(sQuote(unlist(labels)[wide], q = FALSE), collapse = ", "),
+    WARN_LEVELS), call. = FALSE)
+  invisible(NULL)
+}
+
 mask_of <- function(values) {
   if (length(values) == 0L) return(0L)
   sum(bitwShiftL(1L, as.integer(values)))
@@ -260,13 +280,18 @@ set_to_str <- function(s, levels, label) {
   sprintf("%s{%s}", label, paste(sort(s), collapse = ","))
 }
 
+## Literals are written in alphabetical order of the condition, not in the
+## order the columns happen to sit in. Otherwise the same term prints as
+## A{0}*C{1} or C{1}*A{0} depending on how the data frame was assembled, and
+## two runs of the same analysis cannot be compared as text.
 minterm_to_str <- function(minterm, levels, labels) {
   parts <- vapply(seq_along(minterm), function(i) {
     set_to_str(minterm[[i]], levels[[i]], labels[[i]])
   }, character(1))
-  parts <- parts[nzchar(parts)]
-  if (length(parts) == 0L) return("1")
-  paste(parts, collapse = "*")
+  keep <- nzchar(parts)
+  if (!any(keep)) return("1")
+  parts <- parts[keep]
+  paste(parts[order(unlist(labels)[keep], method = "radix")], collapse = "*")
 }
 
 ## Rows covered by exactly one prime implicant identify essential terms.
@@ -280,6 +305,7 @@ calculate_essential_indexes <- function(elements) {
 prime_implicants_on_dc <- function(ctx) {
   prepare_rows(ctx)
   if (nrow(ctx$table) == 0L) return(list())
+  warn_many_levels(ctx$levels, ctx$labels)
   if (any(ctx$levels > MAX_LEVELS)) {
     stopf("Inputs with more than %d levels are not supported.", MAX_LEVELS)
   }
