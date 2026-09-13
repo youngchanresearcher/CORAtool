@@ -129,6 +129,23 @@ test_that("a condition with many levels warns before ON-DC is asked to run", {
   expect_silent(cora_prime_implicants(cora_context(narrow, "O")))
 })
 
+test_that("past the mask width ON-DC refuses by name and ON-OFF still answers", {
+  ## 31 levels is one more than the mask can hold. ON-DC has to say so, and
+  ## has to say which condition and what to do instead.
+  over <- data.frame(A = 0:30, B = rep(0:1, length.out = 31L))
+  over$O <- as.integer(over$A > 28L)
+  expect_error(
+    suppressWarnings(cora_prime_implicants(cora_context(over, "O"))),
+    "'A'.*30 levels.*ON-OFF")
+  ## ON-OFF works from the observed rows, so the width of the mask is not its
+  ## problem at any size, and the answer is still the right one.
+  wide <- data.frame(A = 0:39, B = rep(0:1, length.out = 40L))
+  wide$O <- as.integer(wide$A > 37L)
+  pis <- cora_prime_implicants(cora_context(wide, "O", algorithm = "ON-OFF"))
+  expect_setequal(vapply(pis, function(i) i$implicant, character(1)),
+                  c("#A{38}", "#A{39}"))
+})
+
 test_that("the summary tables say what they left out", {
   df <- data.frame(A = c(1, 0, 1, 0), B = c(1, 0, 0, 1),
                    C = c(0, 1, 1, 0), OUT = c(1, 1, 0, 1))

@@ -114,13 +114,16 @@ first:
 
 | levels | this package | Python |
 |---|---|---|
-| 12 | 0.16s | 0.06s |
-| 14 | 0.85s | 0.21s |
-| 16 | 4.0s | 1.05s |
-| 18 | 23s | 5.9s |
+| 12 | 0.32s | 0.06s |
+| 14 | 1.7s | 0.21s |
+| 16 | 7.6s | 1.05s |
+| 18 | 36s | 5.9s |
 
-Both roughly quintuple every two levels; this package is about four times
-slower in absolute terms. `"ON-OFF"` returns the same prime implicants in
+Both roughly quintuple every two levels. The two columns were timed in
+separate sessions on the same container, whose speed varies between them — an
+earlier run of the same script gave 0.16s / 0.85s / 4.0s / 23s for this
+package — so read the growth rate, which is a property of the algorithm, and
+not the ratio between the columns, which is a property of the afternoon. `"ON-OFF"` returns the same prime implicants in
 0.01s at every size, because it works from the observed rows rather than the
 full configuration space. **Use `"ON-OFF"` for conditions with many levels.**
 A condition of more than 30 levels is refused under `"ON-DC"`, which is the

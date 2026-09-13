@@ -10,8 +10,9 @@
 MAX_LEVELS <- 30L
 
 ## ON-DC merges subsets of a condition's value set, so its cost grows
-## exponentially in the number of levels of a single condition: about 0.2s at
-## twelve levels, 23s at eighteen, and out of reach at thirty. ON-OFF returns
+## exponentially in the number of levels of a single condition: a third of a
+## second at twelve levels, half a minute at eighteen, and out of reach at
+## thirty (the figures move with the machine, the rate does not). ON-OFF returns
 ## the same prime implicants from the observed rows in a fraction of a second
 ## at any size, so the only thing to do here is say so before the wait.
 WARN_LEVELS <- 12L
@@ -312,7 +313,12 @@ prime_implicants_on_dc <- function(ctx) {
   if (nrow(ctx$table) == 0L) return(list())
   warn_many_levels(ctx$levels, ctx$labels)
   if (any(ctx$levels > MAX_LEVELS)) {
-    stopf("Inputs with more than %d levels are not supported.", MAX_LEVELS)
+    stopf(paste0(
+      "Condition(s) %s have more than %d levels, the width of the bit mask ",
+      "the \"ON-DC\" reduction step uses. Use algorithm = \"ON-OFF\", which ",
+      "has no such limit."),
+      paste(sQuote(unlist(ctx$labels)[ctx$levels > MAX_LEVELS], q = FALSE),
+            collapse = ", "), MAX_LEVELS)
   }
 
   table <- ctx$table

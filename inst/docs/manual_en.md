@@ -314,10 +314,10 @@ condition**. Measured with a first condition of k levels and a binary second:
 
 | Levels on that condition | ON-DC | ON-OFF |
 |---|---|---|
-| 12 | 0.16s | 0.01s |
-| 14 | 0.85s | 0.01s |
-| 16 | 4.0s | 0.01s |
-| 18 | 23s | 0.01s |
+| 12 | 0.32s | 0.01s |
+| 14 | 1.7s | 0.01s |
+| 16 | 7.6s | 0.01s |
+| 18 | 36s | 0.01s |
 | 30 | does not finish | 0.01s |
 
 Roughly five times longer for every two levels. **Both find exactly the same
@@ -325,13 +325,16 @@ prime implicants** — the difference is that ON-DC expands the whole
 configuration space while ON-OFF uses only the rows actually observed. Above
 twelve levels the package warns and says so.
 
-> The Python implementation grows the same way (5.9s at eighteen levels), so
-> this is the algorithm rather than the port. This package is about four
-> times slower in absolute terms.
+> The absolute figures move with the machine — an earlier run of the same
+> script on the same container gave 0.16s / 0.85s / 4.0s / 23s — so read the
+> growth rate rather than the seconds. The Python implementation grows the
+> same way (5.9s at eighteen levels, timed in a separate session), so this is
+> the algorithm rather than the port.
 >
 > A condition of more than 30 levels is refused under `"ON-DC"` — that is the
-> width of the bit mask the reduction step uses. `"ON-OFF"` has no such
-> limit.
+> width of the bit mask the reduction step uses — and the message names the
+> condition and points at `"ON-OFF"`, which has no such limit and handles
+> forty levels as fast as four.
 
 ### Stage ③ The prime implicant chart
 

@@ -60,9 +60,12 @@ changes is which input is refused, and how.
   This changes no result: of the 251 cross-validation fields, 225 are
   byte-identical and the other 26 differ only in that order.
 * `"ON-DC"` warns when a condition has more than twelve levels. Its cost
-  grows exponentially in the levels of a single condition — 23 seconds at
+  grows exponentially in the levels of a single condition — half a minute at
   eighteen, out of reach at thirty — while `"ON-OFF"` returns the same prime
-  implicants in a fraction of a second at any size.
+  implicants in a fraction of a second at any size. Past thirty levels, the
+  width of the mask the reduction step uses, `"ON-DC"` now names the offending
+  condition and points at `"ON-OFF"` instead of reporting a bare unsupported
+  input.
 * A run with more than ten thousand irredundant solutions says so, and
   `cora_pi_details()` and `cora_solutions()` lay out the first 50 rather than
   building a table tens of thousands of columns wide. `max_solutions = Inf`
