@@ -251,19 +251,18 @@ eliminate_minterms <- function(table, elements, levels, multi_output) {
 
 ## ------------------------------------------------------------- term printing
 
-set_to_str <- function(s, levels, label, is_multi_level) {
+## Every literal states its value, so a term reads the same whatever the
+## conditions are coded as. The upper/lower case convention it replaces
+## marked a negated literal by the presence of 0 in its value set, which
+## says nothing at all when a condition is coded without a zero.
+set_to_str <- function(s, levels, label) {
   if (length(s) == levels) return("")
-  if (!is_multi_level) {
-    if (0L %in% s) return(tolower(label))
-    return(toupper(label))
-  }
   sprintf("%s{%s}", label, paste(sort(s), collapse = ","))
 }
 
 minterm_to_str <- function(minterm, levels, labels) {
-  is_multi_level <- any(levels > 2L)
   parts <- vapply(seq_along(minterm), function(i) {
-    set_to_str(minterm[[i]], levels[[i]], labels[[i]], is_multi_level)
+    set_to_str(minterm[[i]], levels[[i]], labels[[i]])
   }, character(1))
   parts <- parts[nzchar(parts)]
   if (length(parts) == 0L) return("1")

@@ -5,10 +5,9 @@
 #'
 #' @param ctx A [cora_context()].
 #'
-#' @return A list of prime implicants, of class `cora_implicants`. In the
-#'   printed representation a positive binary literal is upper case, a
-#'   negative one lower case, a multi-value literal carries its values in
-#'   curly brackets, and an essential prime implicant is prefixed with `#`.
+#' @return A list of prime implicants, of class `cora_implicants`. Every
+#'   literal is printed as `CONDITION{value}`, a term joins its literals with
+#'   `*`, and an essential prime implicant is prefixed with `#`.
 #'
 #' @examples
 #' df <- data.frame(A = c(1, 0, 1, 0), B = c(1, 0, 0, 1),

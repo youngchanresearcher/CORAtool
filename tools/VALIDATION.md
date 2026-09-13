@@ -22,6 +22,10 @@ outcome tags, coverage sets, solution sets and solution scores agree
 everywhere, including the largest case (`Multi_output/data4.csv`: 39 prime
 implicants over four outcomes, 1386 irredundant systems).
 
+The comparison predates the change of notation, so re-running it now needs
+the implicant strings mapped between the two conventions; the coverage sets
+and solution memberships it compared are unaffected.
+
 Eight fields differ, all of them accounted for by the two deliberate
 corrections documented in the README:
 

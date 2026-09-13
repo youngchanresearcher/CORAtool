@@ -74,7 +74,7 @@ test_that("a solution renders as a disjunctive normal form", {
                    C = c(0, 1, 1, 0), OUT = c(1, 1, 0, 1))
   sums <- cora_irredundant_sums(cora_context(df, "OUT"))
   expect_setequal(vapply(sums, cora_dnf, character(1)),
-                  c("a+B<=>OUT", "a+c<=>OUT"))
+                  c("A{0}+B{1}<=>OUT", "A{0}+C{0}<=>OUT"))
 })
 
 test_that("a diagram can be drawn without error", {

@@ -11,13 +11,13 @@ test_that("the binary example yields the documented irredundant sums", {
       paste(sort(vapply(s$system, function(i) i$implicant, character(1))),
             collapse = "+")
     }, character(1)),
-    c("#a+B", "#a+c")
+    c("#A{0}+B{1}", "#A{0}+C{0}")
   )
 })
 
 test_that("essential prime implicants come first inside a solution", {
   sums <- cora_irredundant_sums(cora_context(readme_data(), "OUT"))
-  for (s in sums) expect_equal(s$system[[1L]]$implicant, "#a")
+  for (s in sums) expect_equal(s$system[[1L]]$implicant, "#A{0}")
 })
 
 test_that("solution and prime implicant scores match the reference", {
@@ -36,7 +36,7 @@ test_that("the solution table marks the prime implicants of each solution", {
   sols <- cora_solutions(ctx)
   expect_equal(nrow(sols), 2L)
   expect_equal(unname(rowSums(sols)), c(2L, 2L))
-  expect_equal(unname(sols[["#a"]]), c(1L, 1L))
+  expect_equal(unname(sols[["#A{0}"]]), c(1L, 1L))
 })
 
 test_that("single and multi outcome solvers refuse the wrong mode", {
@@ -72,5 +72,5 @@ test_that("multi-outcome systems cover every outcome", {
 test_that("solutions render as sufficiency statements", {
   sums <- cora_irredundant_sums(cora_context(readme_data(), "OUT"))
   expect_setequal(vapply(sums, cora_describe, character(1)),
-                  c("#a + B <=> OUT", "#a + c <=> OUT"))
+                  c("#A{0} + B{1} <=> OUT", "#A{0} + C{0} <=> OUT"))
 })

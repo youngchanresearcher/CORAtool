@@ -175,13 +175,11 @@ validate_context <- function(ctx) {
           paste(names(input_data)[constant], collapse = ", "))
   }
 
-  ## CORA expects conditions coded from zero upwards. A condition that skips
-  ## zero breaks two things. The ON-OFF algorithm builds the free-literal
-  ## domain as {0, ..., levels - 1} rather than from the values actually
-  ## present, and silently drops the rows outside it, so coverage sets and
-  ## the scores derived from them come out wrong. And a binary literal only
-  ## prints in lower case when its value is zero, so with no zero in the data
-  ## every literal prints in upper case whichever value it stands for.
+  ## CORA expects conditions coded from zero upwards. The ON-OFF algorithm
+  ## builds the free-literal domain as {0, ..., levels - 1} rather than from
+  ## the values actually present, and silently drops the rows outside it, so
+  ## coverage sets and the scores derived from them come out wrong. (The
+  ## notation is safe either way here, since every literal states its value.)
   gaps <- vapply(input_data, function(v) {
     u <- sort(unique(as.integer(v)))
     !identical(u, seq.int(0L, length(u) - 1L))
@@ -190,10 +188,8 @@ validate_context <- function(ctx) {
     warning(sprintf(paste0(
       "Condition(s) %s are not coded from 0 upwards. CORA expects the values ",
       "0, 1, 2, ... Such a coding yields wrong coverage sets and scores under ",
-      "the \"ON-OFF\" algorithm, and where every condition is binary it also ",
-      "makes the printed notation ambiguous, since a literal prints in lower ",
-      "case only when its value is 0. Recode the condition(s) before ",
-      "analysing."),
+      "the \"ON-OFF\" algorithm; recode the condition(s), or use \"ON-DC\", ",
+      "which minimises over the values actually present."),
       paste(sQuote(names(input_data)[gaps], q = FALSE), collapse = ", ")),
       call. = FALSE)
   }

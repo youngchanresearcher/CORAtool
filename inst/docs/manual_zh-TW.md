@@ -190,7 +190,7 @@ cora_truth_table(cora_context(raw, "O", case_col = "ID", inc_score1 = 0.5),
 ```r
 ctx <- cora_context(df, "OUT")
 cora_prime_implicants(ctx)
-#> #a, c, B
+#> #A{0}, C{0}, B{1}
 ```
 
 **兩種演算法**（`algorithm` 參數）：
@@ -210,15 +210,15 @@ cora_prime_implicants(ctx)
 
 ```r
 cora_pi_chart(ctx)
-#>    0 1 3
-#> #a 1 1 0
-#> c  0 1 1
-#> B  0 1 1
+#>       0 1 3
+#> #A{0} 1 1 0
+#> C{0}  0 1 1
+#> B{1}  0 1 1
 ```
 
-欄名是真值表中結果為正的列號（從 0 起算）。`#a` 涵蓋第 0、1 列；`c` 與 `B` 各涵蓋第 1、3 列。
+欄名是真值表中結果為正的列號（從 0 起算）。`#A{0}` 涵蓋第 0、1 列；`C{0}` 與 `B{1}` 各涵蓋第 1、3 列。
 
-第 0 列只有 `#a` 涵蓋 → `#a` 是**必要質蘊涵項**（essential prime implicant），任何解都必須包含它。這就是 `#` 前綴的意思。
+第 0 列只有 `#A{0}` 涵蓋 → `#A{0}` 是**必要質蘊涵項**（essential prime implicant），任何解都必須包含它。這就是 `#` 前綴的意思。
 
 ### 階段 ④ Petrick 法求解
 
@@ -226,8 +226,8 @@ cora_pi_chart(ctx)
 
 ```r
 cora_irredundant_sums(ctx)
-#> M1: #a + c
-#> M2: #a + B
+#> M1: #A{0} + C{0}
+#> M2: #A{0} + B{1}
 ```
 
 **兩個解都同樣有效。** 這叫**模型歧義**（model ambiguity），是組態方法的常態現象，不是錯誤——資料本身不足以在這兩個解之間做出區分。誠實的做法是兩個都報告。
@@ -238,10 +238,10 @@ cora_irredundant_sums(ctx)
 
 ```r
 cora_pi_details(ctx)
-#>   PI Cov.r Inc.   M1   M2
-#> 1 #a  0.67    1 0.33 0.33
-#> 2  c  0.67    1 0.33   NA
-#> 3  B  0.67    1   NA 0.33
+#>      PI Cov.r Inc.   M1   M2
+#> 1 #A{0}  0.67    1 0.33 0.33
+#> 2  C{0}  0.67    1 0.33   NA
+#> 3  B{1}  0.67    1   NA 0.33
 
 cora_system_details(ctx)
 #>                  Cov. Inc.
@@ -270,19 +270,23 @@ cora_system_details(ctx)
 
 | 記號 | 意思 | 例 |
 |---|---|---|
-| 大寫字母 | 二元條件為 **1**（存在／高） | `A` |
-| 小寫字母 | 二元條件為 **0**（不存在／低） | `a` |
-| `X{v}` | 多值條件 X 的值為 v | `LENG{2}` |
-| `*` | 邏輯乘（AND，連言） | `A*b*C` |
-| `+` | 邏輯和（OR，選言） | `A*b + C` |
-| `#` 前綴 | 必要質蘊涵項 | `#a` |
+| `X{v}` | 條件 X 的值為 v | `A{0}`、`LENG{2}` |
+| `*` | 邏輯乘（AND，連言） | `A{1}*B{0}*C{1}` |
+| `+` | 邏輯和（OR，選言） | `A{1}*B{0} + C{1}` |
+| `#` 前綴 | 必要質蘊涵項 | `#A{0}` |
 | `1` | 恆真（所有觀察到的組態都是正例） | `M1: #1` |
+
+**每個字面都直接標出數值**，包括二元條件：`A{1}` 是 A 為 1，`A{0}` 是 A 為 0。
+
+原 Python 版用大小寫表示（大寫 = 1，小寫 = 0），本套件不採用，理由見 §8。簡言之：大小寫的判斷依據是「值集合裡有沒有 0」，條件若編碼成 `{1, 2}`，資料裡沒有 0，所有字面都會印成大寫而無法分辨。`X{v}` 不論條件怎麼編碼都不會有歧義。
+
+（`cora_logigram()` 的**輸入**仍然接受大小寫寫法，所以手寫或從 Python 版取來的運算式可以直接畫。）
 
 所以 `#LENG{2}*RISK{1} + #DOSI{1} + PRIC{0}` 讀作：
 
 > 「LENG 為 2 **且** RISK 為 1」**或**「DOSI 為 1」**或**「PRIC 為 0」
 
-前兩項是必要質蘊涵項。
+前兩項是必要質蘊涵項。二元條件也是同樣讀法：`#A{0} + B{1}` 就是「A 為 0」**或**「B 為 1」。
 
 ### 4.2 敘述式
 
@@ -290,7 +294,7 @@ cora_system_details(ctx)
 
 ```r
 cora_describe(cora_irredundant_sums(ctx)[[1]])
-#> "#a + c <=> OUT"
+#> "#A{0} + C{0} <=> OUT"
 ```
 
 | 符號 | 意思 | 條件 |
@@ -310,8 +314,8 @@ cora_describe(cora_irredundant_sums(ctx)[[1]])
 mn <- cora_context(swiss_minaret, c("X", "M"), algorithm = "ON-OFF")
 cora_irredundant_systems(mn)
 #> ---- System 1 ----
-#> X: l*t + S
-#> M: l*t + S + T
+#> X: L{0}*T{0} + S{1}
+#> M: L{0}*T{0} + S{1} + T{1}
 ```
 
 > 系統內的個別式子未必各自不可約，但**整個系統一定是不可約的**。這是 CORA 處理複雜效果的核心：它同時最佳化所有結果，而不是分開跑再拼起來。
@@ -333,9 +337,9 @@ df <- data.frame(A   = c(1, 0, 1, 0),
 ctx <- cora_context(df, output_labels = "OUT")
 
 cora_truth_table(ctx)        # 真值表
-cora_prime_implicants(ctx)   # #a, c, B
+cora_prime_implicants(ctx)   # #A{0}, C{0}, B{1}
 cora_pi_chart(ctx)           # 覆蓋矩陣
-cora_irredundant_sums(ctx)   # M1: #a + c ; M2: #a + B
+cora_irredundant_sums(ctx)   # M1: #A{0} + C{0} ; M2: #A{0} + B{1}
 cora_pi_details(ctx)         # 每項的統計量
 cora_system_details(ctx)     # 解的整體統計量
 cora_solutions(ctx)          # 摘要表
@@ -373,21 +377,21 @@ mn <- cora_context(swiss_minaret, c("X", "M"), algorithm = "ON-OFF")
 
 cora_irredundant_systems(mn)
 #> ---- System 1 ----
-#> X: l*t + S
-#> M: l*t + S + T
+#> X: L{0}*T{0} + S{1}
+#> M: L{0}*T{0} + S{1} + T{1}
 
 cora_solutions(mn)
-#>   l*t S A*t A*L l T A Output System
-#> 1   1 1   0   0 0 0 0      X      1
-#> 2   1 1   0   0 0 1 0      M      1
+#>   L{0}*T{0} S{1} A{1}*T{0} A{1}*L{1} L{0} T{1} A{1} Output System
+#> 1         1    1         0         0    0    0    0      X      1
+#> 2         1    1         0         0    0    1    0      M      1
 
 cat(cora_describe(cora_irredundant_systems(mn)[[1]]))
 #> ---- System 1 ----
-#> l*t + S <=> X
-#> l*t + S + T <=> M
+#> L{0}*T{0} + S{1} <=> X
+#> L{0}*T{0} + S{1} + T{1} <=> M
 ```
 
-`X` 與 `M` 共用 `l*t` 和 `S` 兩條路徑，`M` 另外多一條 `T`。
+`X` 與 `M` 共用 `L{0}*T{0}` 和 `S{1}` 兩條路徑，`M` 另外多一條 `T{1}`。
 
 ### 5.4 組態式資料探勘
 
@@ -440,7 +444,7 @@ dev.off()
 **怎麼讀邏輯圖：**
 
 - 左側直線 = 條件匯流排，每條一個條件
-- 線上的小圓圈（泡泡）= 該字面被否定（小寫字母）
+- 線上的小圓圈（泡泡）= 該字面的值為 0
 - 黃色方塊（右端半圓）= **AND 閘**，連言
 - 藍色盾形 = **OR 閘**，選言
 - 只有單一字面的項不經 AND 閘，直接連到 OR 閘
@@ -450,7 +454,7 @@ dev.off()
 
 ```r
 cora_dnf(cora_irredundant_sums(ctx)[[1]])
-#> "a+c<=>OUT"
+#> "A{0}+C{0}<=>OUT"
 ```
 
 > 恆真式（`1<=>OUT`）沒有兩層邏輯圖可畫，`cora_logigram()` 會明確報錯。
@@ -532,22 +536,22 @@ cora_dnf(cora_irredundant_sums(ctx)[[1]])
 
 ```
 Condition(s) 'B' are not coded from 0 upwards. CORA expects the values
-0, 1, 2, ... With the "ON-OFF" algorithm such a coding yields wrong
-coverage sets and scores; recode the condition(s) before analysing.
+0, 1, 2, ... Such a coding yields wrong coverage sets and scores under
+the "ON-OFF" algorithm; recode the condition(s) before analysing.
 ```
 
-**還有第二個後果，這個連 `"ON-DC"` 也躲不掉。** 二元條件的記號規則是「值集合含 0 → 小寫，否則大寫」。資料裡沒有 0 時，**每個字面都印成大寫**，不論它代表的是高值還是低值。例如條件全部編碼成 `{1, 2}` 時：
+**Python 版還有第二個後果，本套件已經避開。** Python 版二元條件的記號規則是「值集合含 0 → 小寫，否則大寫」。資料裡沒有 0 時，每個字面都印成大寫，不論它代表高值還是低值：
 
 ```
-質蘊涵項: A | C | #B
-    A  → 實際是 A=1（低值）
-    C  → 實際是 C=2（高值）
-    #B → 實際是 B=2（高值）
+Python 版輸出:  A | C | #B
+    A  → 實際是 A=1（A 的低值）
+    C  → 實際是 C=2（C 的高值）
+    #B → 實際是 B=2（B 的高值）
 ```
 
-`A` 和 `B` 形式相同，意思相反，從輸出上完全看不出來。（多值資料因為用 `X{v}` 標明數值，不受這個問題影響。）
+`A` 和 `B` 形式相同、意思相反，從輸出上分辨不出來。**本套件一律用 `X{v}` 記號**（見 §4.1），同樣的資料會印成 `A{1} | C{2} | #B{2}`，不論條件怎麼編碼都不會有歧義。
 
-**處理方式**：把條件重新編碼成從 0 開始（例如 `B - 1`）。這同時解決覆蓋錯誤與記號歧義兩個問題。只改用 `"ON-DC"` 只能避開覆蓋錯誤，記號歧義還在。
+**處理方式**：把條件重新編碼成從 0 開始（例如 `B - 1`），或改用 `"ON-DC"`。`"ON-DC"` 的化簡直接在真值表的實際值上進行，覆蓋集不受影響。
 
 ---
 
@@ -555,11 +559,12 @@ coverage sets and scores; recode the condition(s) before analysing.
 
 本套件移植自 PoliUniLu 的 Python 套件 `CORA` 與 `LOGIGRAM`。移植結果在其自身的測試與範例資料上逐一比對過：**真值表、質蘊涵項、覆蓋集、解集完全一致**（41 個情境、263 個比對欄位）。
 
-三處刻意的差異：
+四處刻意的差異：
 
 1. **解的排序**：本套件用確定性排序（先短後長，同長度依字典序），所以 R 的 `M1` 未必是 Python 的 `M1`。**解的集合相同。**
-2. **ON-OFF + 多結果時質蘊涵項的 inclusion 分數**：Python 版拿**全部**結果欄計算，導致同一個質蘊涵項在 ON-DC 和 ON-OFF 下分數不一致。本套件用該質蘊涵項自己的結果欄，兩種演算法因此一致。
-3. **資料探勘中的恆真式**：唯一解是 `1` 的組合在本套件記為 0 解 0 分。Python 版原意相同，但其檢查永遠不會觸發。
+2. **記號法**：本套件一律用 `X{v}`，Python 版對二元條件用大小寫。這**不改變任何計算結果**，只改變印出來的樣子——`#a + B` 在本套件是 `#A{0} + B{1}`。改的理由是大小寫的判斷依據（值集合含不含 0）在條件未從 0 編碼時完全失效，見 §7.4。`cora_logigram()` 的輸入仍接受大小寫寫法。
+3. **ON-OFF + 多結果時質蘊涵項的 inclusion 分數**：Python 版拿**全部**結果欄計算。該質蘊涵項物件自己的 `outputs` 欄位說它只對應某一個結果，`output_labels` 欄位卻列出全部——兩個欄位互相矛盾，而類別文件說兩者都是「corresponding to the implicant」。本套件用該質蘊涵項自己的結果欄。
+4. **資料探勘中的恆真式**：唯一解是 `1` 的組合在本套件記為 0 解 0 分。Python 版原意相同，但其檢查永遠不會觸發。
 
 這三處都是本套件自己的判斷，不是原作者的。
 

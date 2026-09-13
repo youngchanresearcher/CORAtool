@@ -11,7 +11,7 @@ test_that("the binary example yields the documented prime implicants", {
       cora_context(readme_data(), "OUT", algorithm = alg)
     )
     expect_setequal(vapply(pis, function(p) p$implicant, character(1)),
-                    c("B", "c", "#a"))
+                    c("B{1}", "C{0}", "#A{0}"))
   }
 })
 
@@ -19,7 +19,7 @@ test_that("essential prime implicants are marked", {
   pis <- cora_prime_implicants(cora_context(readme_data(), "OUT"))
   essential <- vapply(pis, function(p) p$essential, logical(1))
   labels <- vapply(pis, function(p) p$implicant, character(1))
-  expect_equal(labels[essential], "#a")
+  expect_equal(labels[essential], "#A{0}")
 })
 
 test_that("coverage of a prime implicant indexes truth table rows", {
@@ -27,18 +27,18 @@ test_that("coverage of a prime implicant indexes truth table rows", {
   pis <- cora_prime_implicants(ctx)
   cov <- stats::setNames(lapply(pis, function(p) p$coverage),
                          vapply(pis, function(p) p$implicant, character(1)))
-  expect_equal(sort(cov[["#a"]]), c(0L, 1L))
-  expect_equal(sort(cov[["B"]]), c(1L, 3L))
-  expect_equal(sort(cov[["c"]]), c(1L, 3L))
+  expect_equal(sort(cov[["#A{0}"]]), c(0L, 1L))
+  expect_equal(sort(cov[["B{1}"]]), c(1L, 3L))
+  expect_equal(sort(cov[["C{0}"]]), c(1L, 3L))
 })
 
 test_that("the prime implicant chart matches the coverage sets", {
   ctx <- cora_context(readme_data(), "OUT")
   chart <- cora_pi_chart(ctx)
   expect_equal(dim(chart), c(3L, 3L))
-  expect_setequal(rownames(chart), c("B", "c", "#a"))
+  expect_setequal(rownames(chart), c("B{1}", "C{0}", "#A{0}"))
   expect_true(all(unlist(chart) %in% c(0L, 1L)))
-  expect_equal(sum(chart["#a", ]), 2)
+  expect_equal(sum(chart["#A{0}", ]), 2)
 })
 
 test_that("multi-value multi-outcome data gives the documented implicants", {

@@ -18,9 +18,9 @@ df <- data.frame(A   = c(1, 0, 1, 0),
 ctx <- cora_context(df, output_labels = "OUT")
 
 cora_truth_table(ctx)        # the configurations the analysis works on
-cora_prime_implicants(ctx)   # #a, c, B   ('#' marks an essential term)
+cora_prime_implicants(ctx)   # #A{0}, C{0}, B{1}  ('#' marks an essential term)
 cora_pi_chart(ctx)           # which term covers which positive row
-cora_irredundant_sums(ctx)   # M1: #a + c ; M2: #a + B
+cora_irredundant_sums(ctx)   # M1: #A{0} + C{0} ; M2: #A{0} + B{1}
 cora_pi_details(ctx)         # coverage and inclusion of every term
 cora_system_details(ctx)     # coverage and inclusion of the solution
 cora_solutions(ctx)          # which terms belong to which solution
@@ -92,7 +92,7 @@ cora_data_mining(df, "OUT", len_of_tuple = 1, automatic = TRUE)
 
 cora_logigram(cora_irredundant_sums(ctx)[[1]])
 cora_logigram(cora_irredundant_systems(mn)[[1]])
-cora_logigram("A{1}*B{2}+C{0}<=>F")
+cora_logigram("A{1}*B{2}+C{0}<=>F")   # the reader also takes "A*b+C<=>F"
 
 ## Saving one to a file.
 ## png("figure.png", width = 1100, height = 720, res = 130)

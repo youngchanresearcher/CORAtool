@@ -41,13 +41,16 @@ df <- data.frame(A   = c(1, 0, 1, 0),
 ctx <- cora_context(df, output_labels = "OUT")
 
 cora_truth_table(ctx)        # the configurations the analysis works on
-cora_prime_implicants(ctx)   # B, c, #a
-cora_irredundant_sums(ctx)   # M1: #a + c ; M2: #a + B
+cora_prime_implicants(ctx)   # #A{0}, C{0}, B{1}
+cora_irredundant_sums(ctx)   # M1: #A{0} + C{0} ; M2: #A{0} + B{1}
 ```
 
-A positive binary literal is printed in upper case, a negative one in lower
-case, and an essential prime implicant is prefixed with `#`. A multi-value
-literal carries its value in curly brackets, as in `B{2}*D{0}`.
+Every literal is printed as `CONDITION{value}`, so a term says outright which
+value of a condition it stands for: `B{2}*D{0}` is B at 2 and D at 0. An
+essential prime implicant is prefixed with `#`. The package does not use the
+upper/lower case convention of the Python implementation, which marks a
+negated literal by the presence of 0 in its value set and therefore says
+nothing when a condition happens to be coded without a zero.
 
 ### Truth table construction
 
@@ -97,9 +100,13 @@ cora_data_mining(mccluskey, c("F1", "F2"), len_of_tuple = 2)
 form, as a two-level logic diagram:
 
 ```r
-cora_logigram("A*B+c*A+b<=>F")
+cora_logigram("A{1}*B{1}+C{0}<=>F")
 cora_logigram(cora_irredundant_sums(ctx)[[1]])
 ```
+
+The diagram reader still accepts the upper/lower case notation on input
+(`"A*B+c*A+b<=>F"`), so expressions written by hand or taken from the Python
+implementation can be drawn as they are.
 
 ## Function reference
 
@@ -135,10 +142,17 @@ from the examples of the Python CORA package.
 
 The R results were checked configuration by configuration against the Python
 package on its own test and example data: truth tables, prime implicants,
-coverage sets and solution sets agree. Three differences are worth knowing,
+coverage sets and solution sets agree. Four differences are worth knowing,
 and each of them is this package's own judgement rather than the original
 authors':
 
+* **Notation.** Every literal is printed as `CONDITION{value}`. The Python
+  implementation prints a binary literal in upper or lower case depending on
+  whether 0 is in its value set, which distinguishes nothing when a condition
+  is coded without a zero: `A` then stands for A's lower value and `B` for
+  B's upper value, indistinguishably. Nothing in the computation changes;
+  `#a + B` here reads `#A{0} + B{1}`. The diagram reader still accepts the
+  case notation on input.
 * **Solution order.** Solutions are returned in a deterministic order
   (shortest first, then lexicographic), so `M1` in R need not be `M1` in
   Python. The sets of solutions are the same.

@@ -10,10 +10,9 @@ cora_prime_implicants(ctx)
 \item{ctx}{A [cora_context()].}
 }
 \value{
-A list of prime implicants, of class `cora_implicants`. In the
-  printed representation a positive binary literal is upper case, a
-  negative one lower case, a multi-value literal carries its values in
-  curly brackets, and an essential prime implicant is prefixed with `#`.
+A list of prime implicants, of class `cora_implicants`. Every
+  literal is printed as `CONDITION{value}`, a term joins its literals with
+  `*`, and an essential prime implicant is prefixed with `#`.
 }
 \description{
 Minimises the truth table with the algorithm chosen in the context and
