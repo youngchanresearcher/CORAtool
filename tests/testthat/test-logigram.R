@@ -87,3 +87,17 @@ test_that("a diagram can be drawn without error", {
   expect_silent(cora_logigram("A*B+c*A+b<=>F"))
   expect_silent(cora_logigram(c("A{1}*B{2}+A{2}<=>F1", "A{1}+C{1}*B{2}<=>F2")))
 })
+
+test_that("a constant function is refused rather than drawn", {
+  ## A tautological solution would otherwise be drawn with an input bus
+  ## named "1", which reads as a condition that does not exist.
+  expect_error(logigram_parse("1<=>F"), "constant function")
+  expect_error(logigram_parse("0<=>F"), "constant function")
+  expect_error(logigram_parse("A+1<=>F"), "constant function")
+  expect_error(logigram_parse(c("A*B<=>F1", "1<=>F2")), "F2")
+
+  df <- data.frame(A = c(1, 0, 1, 0), B = c(1, 0, 0, 1), OUT = c(1, 1, 1, 1))
+  tautology <- cora_irredundant_sums(cora_context(df, "OUT"))[[1L]]
+  expect_equal(cora_dnf(tautology), "1<=>OUT")
+  expect_error(cora_logigram(tautology), "constant function")
+})

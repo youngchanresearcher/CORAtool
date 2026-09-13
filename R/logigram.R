@@ -74,6 +74,19 @@ logigram_parse <- function(input, notation = c("case", "prime")) {
     strsplit(l, "+", fixed = TRUE)[[1L]]
   })
 
+  ## A term of "1" or "0" makes its function constant. There is nothing to
+  ## draw, and treating the digit as a condition would produce a diagram with
+  ## an input bus named "1".
+  constant <- vapply(terms_per_f, function(terms) any(terms %in% c("0", "1")),
+                     logical(1))
+  if (any(constant)) {
+    k <- which(constant)[[1L]]
+    term <- terms_per_f[[k]][terms_per_f[[k]] %in% c("0", "1")][[1L]]
+    stopf(paste0("A constant function has no two-level diagram: the ",
+                 "expression for %s contains the term \"%s\"."),
+          outputs[[k]], term)
+  }
+
   all_terms <- unlist(terms_per_f, use.names = FALSE)
   literals <- unlist(lapply(all_terms, function(t) {
     strsplit(t, "*", fixed = TRUE)[[1L]]
