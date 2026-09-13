@@ -58,6 +58,10 @@ cora_data_mining <- function(data,
   if (len_of_tuple < 1L || len_of_tuple > length(input_labels)) {
     stopf("`len_of_tuple` must lie between 1 and %d.", length(input_labels))
   }
+  ## Checked here as well as in the context: the per-tuple loop treats a
+  ## failed analysis as a tuple with no solution, which would turn a coding
+  ## problem into a row of zeros rather than a message.
+  check_zero_based(data[input_labels])
 
   combos <- utils::combn(input_labels, len_of_tuple, simplify = FALSE)
   rows <- lapply(combos, function(cols) {

@@ -302,6 +302,7 @@ prime_implicants_on_off <- function(ctx) {
   if (all(constant)) return(prime_implicants_on_dc(ctx))
 
   ctx$levels <- context_levels(ctx)
+  ctx$value_sets <- context_value_sets(ctx)
   ctx$labels <- in_cols
   base <- literal_base(ctx$levels)
 
@@ -317,7 +318,7 @@ prime_implicants_on_off <- function(ctx) {
     res_keys <- character(0)
     for (products in acc) {
       for (p in products) {
-        raw <- transform_to_raw_implicant(p, ctx$levels, base)
+        raw <- transform_to_raw_implicant(p, ctx$value_sets, base)
         rows <- which(vapply(seq_len(nrow(in_mat)), function(r) {
           row_in_minterm(in_mat[r, ], raw)
         }, logical(1)))
@@ -350,7 +351,7 @@ prime_implicants_on_off <- function(ctx) {
   if (length(essentials) > 0L) {
     cov_essentials <- reduce_the_onset(essentials, pdata, in_cols, output)
     for (i in seq_along(essentials)) {
-      raw <- row_term_to_raw_implicant(essentials[[i]], ctx$levels)
+      raw <- row_term_to_raw_implicant(essentials[[i]], ctx$value_sets)
       prime_implicants[[length(prime_implicants) + 1L]] <- new_implicant(
         ctx,
         implicant = minterm_to_str(raw, ctx$levels, ctx$labels),
@@ -374,7 +375,7 @@ prime_implicants_on_off <- function(ctx) {
 
   reduction <- onoff_reduction_single(grouping$onset, grouping$offset, base)
   for (i in seq_along(reduction$implicants)) {
-    raw <- transform_to_raw_implicant(reduction$implicants[[i]], ctx$levels, base)
+    raw <- transform_to_raw_implicant(reduction$implicants[[i]], ctx$value_sets, base)
     prime_implicants[[length(prime_implicants) + 1L]] <- new_implicant(
       ctx,
       implicant = minterm_to_str(raw, ctx$levels, ctx$labels),

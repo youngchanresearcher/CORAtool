@@ -12,6 +12,8 @@
   `cora_inclusion_score()`, `cora_pi_details()`, `cora_system_details()`,
   `cora_solutions()`, `cora_describe()`).
 * Configurational data mining (`cora_data_mining()`).
+* `cora_recode()` maps conditions onto `0, 1, 2, ...`; data coded otherwise
+  is refused with a message naming the columns to fix.
 * Two-level logic diagrams (`cora_logigram()`, `cora_dnf()`).
 * Optional cross-check against the Python implementation
   (`cora_python_available()`, `cora_compare_python()`).

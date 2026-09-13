@@ -5,6 +5,9 @@ LOGIGRAM_SPLIT <- "^([^<(=|>)-]+)(<*(=|-)>*(.+))$"
 
 logigram_clean <- function(input) {
   x <- gsub("[[:space:]]", "", as.character(input))
+  ## Square brackets are the multi-value notation of the QCA package, curly
+  ## brackets that of CORA and QCApro. Both are read; both mean the same.
+  x <- chartr("[]", "{}", x)
   x[nzchar(x)]
 }
 
@@ -176,6 +179,8 @@ draw_bubble <- function(x, y, r) {
 #'
 #' @param x A character vector of functions in disjunctive normal form, such
 #'   as `"A*B+c*A+b<=>F"` or `"A{1}*B{2}+C{0}<=>F"`, one entry per outcome.
+#'   Square brackets are read as curly ones, so the `"A[1]*B[2]"` notation of
+#'   the QCA package is accepted too.
 #'   A [cora_context()] or a solution from [cora_irredundant_sums()] or
 #'   [cora_irredundant_systems()] is accepted directly and converted first.
 #' @param color_or Fill colour of the OR gates.

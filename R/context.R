@@ -175,24 +175,7 @@ validate_context <- function(ctx) {
           paste(names(input_data)[constant], collapse = ", "))
   }
 
-  ## CORA expects conditions coded from zero upwards. The ON-OFF algorithm
-  ## builds the free-literal domain as {0, ..., levels - 1} rather than from
-  ## the values actually present, and silently drops the rows outside it, so
-  ## coverage sets and the scores derived from them come out wrong. (The
-  ## notation is safe either way here, since every literal states its value.)
-  gaps <- vapply(input_data, function(v) {
-    u <- sort(unique(as.integer(v)))
-    !identical(u, seq.int(0L, length(u) - 1L))
-  }, logical(1))
-  if (any(gaps)) {
-    warning(sprintf(paste0(
-      "Condition(s) %s are not coded from 0 upwards. CORA expects the values ",
-      "0, 1, 2, ... Such a coding yields wrong coverage sets and scores under ",
-      "the \"ON-OFF\" algorithm; recode the condition(s), or use \"ON-DC\", ",
-      "which minimises over the values actually present."),
-      paste(sQuote(names(input_data)[gaps], q = FALSE), collapse = ", ")),
-      call. = FALSE)
-  }
+  check_zero_based(input_data)
 
   ctx$validated <- TRUE
   invisible(ctx)
@@ -324,6 +307,35 @@ context_dims <- function(ctx) {
   })
 }
 
+## CORA expects conditions coded from zero upwards. Refusing such data is
+## what the other configurational packages in R do, and it is the only way to
+## be sure a result was not quietly computed on a coding the method does not
+## define: the ON-OFF algorithm restores a free literal from the values the
+## condition takes, so a gap in the coding changes which rows a term covers.
+check_zero_based <- function(input_data) {
+  gaps <- vapply(input_data, function(v) {
+    if (!is.numeric(v) || any(is.na(v)) || any(v != as.integer(v))) return(FALSE)
+    u <- sort(unique(as.integer(v)))
+    !identical(u, seq.int(0L, length(u) - 1L))
+  }, logical(1))
+  if (!any(gaps)) return(invisible(NULL))
+  bad <- names(input_data)[gaps]
+  stopf(paste0(
+    "Condition(s) %s are not coded from 0 upwards. CORA expects each ",
+    "condition to take the values 0, 1, 2, ... with no gaps.\n",
+    "  Recode them with:  data <- cora_recode(data, c(%s))\n",
+    "  cora_recode() maps each condition onto 0, 1, 2, ... keeping the ",
+    "order of its values."),
+    paste(sQuote(bad, q = FALSE), collapse = ", "),
+    paste(sprintf('"%s"', bad), collapse = ", "))
+}
+
+## The values each input column actually takes in the truth table, sorted.
+context_value_sets <- function(ctx) {
+  lapply(ctx$preprocessed_data[ctx$input_labels],
+         function(v) sort(unique(as.integer(v))))
+}
+
 ## Builds the configuration space used by the ON-DC algorithm: every input
 ## combination except those whose outcomes are all zero, together with the
 ## indices of the positive ("care") rows inside it.
@@ -377,4 +389,57 @@ prepare_rows <- function(ctx) {
   ctx$positive_cares <- which(positive) - 1L
   ctx$prepared_rows <- TRUE
   invisible(ctx)
+}
+
+#' Recode conditions onto 0, 1, 2, ...
+#'
+#' CORA reads a condition's values as the levels of a factor coded from zero
+#' upwards. Data seldom arrives that way: `as.integer()` on a factor numbers
+#' the levels from one, and rating scales are usually stored as they were
+#' collected. This function maps each named condition onto `0, 1, 2, ...`,
+#' keeping the order of its values, and leaves every other column alone.
+#'
+#' @param data A data frame.
+#' @param conditions Character vector naming the columns to recode. Defaults
+#'   to every integer-valued column that is not already coded from zero.
+#'
+#' @return `data` with the named columns recoded.
+#'
+#' @examples
+#' df <- data.frame(A = c(2, 1, 2, 1), B = c(1, 2, 1, 2), OUT = c(1, 0, 1, 1))
+#' cora_recode(df, c("A", "B"))
+#'
+#' ## A rating scale collected as 1-5 becomes 0-4.
+#' cora_recode(data.frame(score = c(3, 1, 5, 1)), "score")
+#'
+#' ## Left to itself it recodes exactly the columns that need it.
+#' cora_recode(df)
+#' @export
+cora_recode <- function(data, conditions = NULL) {
+  if (!is.data.frame(data)) stopf("`data` must be a data frame.")
+
+  needs_recoding <- function(v) {
+    if (!is.numeric(v) || any(is.na(v)) || any(v != as.integer(v))) return(FALSE)
+    u <- sort(unique(as.integer(v)))
+    !identical(u, seq.int(0L, length(u) - 1L))
+  }
+
+  if (is.null(conditions)) {
+    conditions <- names(data)[vapply(data, needs_recoding, logical(1))]
+    if (length(conditions) == 0L) return(data)
+  }
+  missing_cols <- setdiff(conditions, names(data))
+  if (length(missing_cols)) {
+    stopf("Column(s) not found in the data: %s.",
+          paste(missing_cols, collapse = ", "))
+  }
+
+  for (col in conditions) {
+    v <- data[[col]]
+    if (!is.numeric(v) || any(is.na(v)) || any(v != as.integer(v))) {
+      stopf("Column '%s' must contain integers to be recoded.", col)
+    }
+    data[[col]] <- match(as.integer(v), sort(unique(as.integer(v)))) - 1L
+  }
+  data
 }

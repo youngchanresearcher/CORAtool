@@ -42,19 +42,21 @@ test_that("the prime implicant chart matches the coverage sets", {
 })
 
 test_that("multi-value multi-outcome data gives the documented implicants", {
-  df <- data.frame(A = c(1, 1, 0, 0), B = c(2, 1, 2, 2), C = c(0, 1, 1, 2),
-                   D = c(1, 0, 0, 0), OUT1 = c(1, 2, 0, 1),
-                   OUT2 = c(2, 0, 1, 1), OUT3 = c(1, 0, 2, 1))
+  ## B is coded {1, 2} in the reference example; recoding shifts B's values
+  ## down by one, so B{2} there reads B{1} here.
+  df <- cora_recode(
+    data.frame(A = c(1, 1, 0, 0), B = c(2, 1, 2, 2), C = c(0, 1, 1, 2),
+               D = c(1, 0, 0, 0), OUT1 = c(1, 2, 0, 1),
+               OUT2 = c(2, 0, 1, 1), OUT3 = c(1, 0, 2, 1)),
+    "B"
+  )
   for (alg in c("ON-DC", "ON-OFF")) {
     ctx <- cora_context(df, c("OUT1{1,2}", "OUT2{1}", "OUT3{1,0}"),
                         algorithm = alg)
-    ## B is coded {1, 2} in the reference example, which the package warns
-    ## about; the prime implicants are still the documented ones.
-    pis <- suppressWarnings(cora_prime_implicants(ctx))
     expect_setequal(
-      vapply(pis, function(p) p$implicant, character(1)),
-      c("C{2}", "A{1}", "B{1}", "D{1}", "C{0}", "B{2}*C{1}", "A{0}",
-        "B{2}*D{0}")
+      vapply(cora_prime_implicants(ctx), function(p) p$implicant, character(1)),
+      c("C{2}", "A{1}", "B{0}", "D{1}", "C{0}", "B{1}*C{1}", "A{0}",
+        "B{1}*D{0}")
     )
   }
 })

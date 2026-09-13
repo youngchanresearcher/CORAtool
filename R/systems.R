@@ -227,6 +227,8 @@ cora_irredundant_sums <- function(ctx, max_depth = NULL) {
 #' df <- data.frame(A = c(1, 1, 0, 0), B = c(2, 1, 2, 2), C = c(0, 1, 1, 2),
 #'                  D = c(1, 0, 0, 0), OUT1 = c(1, 2, 0, 1),
 #'                  OUT2 = c(2, 0, 1, 1), OUT3 = c(1, 0, 2, 1))
+#' ## B is coded 1 and 2 here, which CORA does not accept.
+#' df <- cora_recode(df, "B")
 #' ctx <- cora_context(df, c("OUT1{1,2}", "OUT2{1}", "OUT3{1,0}"),
 #'                     algorithm = "ON-OFF")
 #' cora_irredundant_systems(ctx)

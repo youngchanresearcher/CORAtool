@@ -58,9 +58,12 @@ bool_multiply <- function(m, base) {
 }
 
 ## Expands a product of literals into the canonical minterm representation:
-## one value set per input column, full domain where the literal is free.
-transform_to_raw_implicant <- function(impl, levels, base) {
-  res <- lapply(levels, function(i) seq.int(0L, i - 1L))
+## one value set per input column, and for a free literal the values the
+## condition actually takes. Deriving that set from the number of levels
+## instead would assume the coding starts at zero, and would drop every row
+## whose value falls outside {0, ..., levels - 1}.
+transform_to_raw_implicant <- function(impl, value_sets, base) {
+  res <- lapply(value_sets, as.integer)
   for (code in impl) {
     d <- decode_literal(code, base)
     res[[d$column + 1L]] <- as.integer(d$value)
@@ -69,8 +72,8 @@ transform_to_raw_implicant <- function(impl, levels, base) {
 }
 
 ## Same, but from a row term (-1 marking free literals).
-row_term_to_raw_implicant <- function(term, levels) {
-  res <- lapply(levels, function(i) seq.int(0L, i - 1L))
+row_term_to_raw_implicant <- function(term, value_sets) {
+  res <- lapply(value_sets, as.integer)
   for (i in seq_along(term)) {
     if (term[[i]] != -1L) res[[i]] <- as.integer(term[[i]])
   }

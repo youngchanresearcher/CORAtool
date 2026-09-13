@@ -101,3 +101,19 @@ test_that("a constant function is refused rather than drawn", {
   expect_equal(cora_dnf(tautology), "1<=>OUT")
   expect_error(cora_logigram(tautology), "constant function")
 })
+
+test_that("the square bracket notation of the QCA package is read too", {
+  square <- logigram_parse("A[1]*B[2]+C[0]<=>F")
+  curly <- logigram_parse("A{1}*B{2}+C{0}<=>F")
+  expect_equal(square, curly)
+  expect_equal(logigram_mode("A[1]*B[2]+C[0]<=>F"), "MULTI_VALUE")
+  expect_equal(logigram_mode(c("A[1]<=>F1", "B[2]<=>F2")), "MV_MULTI_OUTPUT")
+
+  path <- tempfile(fileext = ".pdf")
+  grDevices::pdf(path)
+  on.exit({
+    grDevices::dev.off()
+    unlink(path)
+  }, add = TRUE)
+  expect_silent(cora_logigram("A[1]*B[2]+C[0]<=>F"))
+})

@@ -48,25 +48,36 @@ test_that("single and multi outcome solvers refuse the wrong mode", {
 })
 
 test_that("multi-outcome systems cover every outcome", {
-  df <- data.frame(A = c(1, 1, 0, 0), B = c(2, 1, 2, 2), C = c(0, 1, 1, 2),
-                   D = c(1, 0, 0, 0), OUT1 = c(1, 2, 0, 1),
-                   OUT2 = c(2, 0, 1, 1), OUT3 = c(1, 0, 2, 1))
-  ctx <- cora_context(df, c("OUT1{1,2}", "OUT2{1}", "OUT3{1,0}"),
-                      algorithm = "ON-OFF")
-  systems <- suppressWarnings(cora_irredundant_systems(ctx))
-  expect_setequal(
-    vapply(systems, function(s) {
+  df <- cora_recode(
+    data.frame(A = c(1, 1, 0, 0), B = c(2, 1, 2, 2), C = c(0, 1, 1, 2),
+               D = c(1, 0, 0, 0), OUT1 = c(1, 2, 0, 1),
+               OUT2 = c(2, 0, 1, 1), OUT3 = c(1, 0, 2, 1)),
+    "B"
+  )
+  label <- function(systems) {
+    sort(vapply(systems, function(s) {
       paste(vapply(s$system_multiple, function(per_out) {
         paste(sort(vapply(per_out, function(i) i$implicant, character(1))),
               collapse = "+")
       }, character(1)), collapse = "/")
-    }, character(1)),
-    c("A{1}/B{2}*D{0}/A{1}", "B{1}/B{2}*D{0}/B{1}")
-  )
+    }, character(1)))
+  }
+  solve <- function(alg) {
+    cora_irredundant_systems(
+      cora_context(df, c("OUT1{1,2}", "OUT2{1}", "OUT3{1,0}"), algorithm = alg)
+    )
+  }
+
+  systems <- solve("ON-OFF")
+  expect_length(systems, 9L)
+  expect_true("A{1}+C{2}/B{1}*D{0}+C{2}/A{1}+C{2}" %in% label(systems))
+  ## Every system in this data covers and includes completely.
   for (s in systems) {
-    expect_equal(cora_coverage_score(s), 0.75)
+    expect_equal(cora_coverage_score(s), 1)
     expect_equal(cora_inclusion_score(s), 1)
   }
+  ## With the coding fixed, the two algorithms return the same systems.
+  expect_equal(label(systems), label(solve("ON-DC")))
 })
 
 test_that("solutions render as sufficiency statements", {

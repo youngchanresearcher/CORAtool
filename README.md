@@ -65,11 +65,14 @@ of them count as positive:
 | `case_col` | column holding case identifiers |
 | `algorithm` | `"ON-DC"` (Quine-McCluskey over positive and don't care terms) or `"ON-OFF"` (McCluskey's modified algorithm over positive and negative terms) |
 
-Conditions must be coded from zero upwards. A condition coded `{1, 2}`
-rather than `{0, 1}` makes the `"ON-OFF"` algorithm build the free-literal
-domain as `{0, 1}` and drop every row it cannot represent, so its coverage
-sets and scores come out wrong while `"ON-DC"` stays correct. The package
-warns when it sees such a coding; the Python implementation does not.
+Conditions must be coded from zero upwards, with no gaps: `0, 1, 2, ...`
+The package refuses data that is coded otherwise and names the columns to
+fix, as the other configurational packages in R do. `as.integer()` on a
+factor numbers the levels from one, so this is easy to run into:
+
+```r
+df <- cora_recode(df, c("A", "B"))   # or cora_recode(df) to find them itself
+```
 
 ### Multi-value conditions and complex effects
 
@@ -119,6 +122,7 @@ implementation can be drawn as they are.
 | `cora_irredundant_sums()` | solutions, one outcome |
 | `cora_irredundant_systems()` | solutions, several outcomes |
 | `cora_petrick()` | Petrick's method on a coverage list |
+| `cora_recode()` | map conditions onto `0, 1, 2, ...` |
 | `cora_pi_details()`, `cora_system_details()`, `cora_solutions()` | summary tables |
 | `cora_coverage_score()`, `cora_inclusion_score()` | sufficiency statistics |
 | `cora_describe()`, `cora_dnf()` | textual renderings of a solution |
@@ -142,10 +146,19 @@ from the examples of the Python CORA package.
 
 The R results were checked configuration by configuration against the Python
 package on its own test and example data: truth tables, prime implicants,
-coverage sets and solution sets agree. Four differences are worth knowing,
+coverage sets and solution sets agree. Five differences are worth knowing,
 and each of them is this package's own judgement rather than the original
 authors':
 
+* **Conditions that skip zero.** Data whose conditions are not coded
+  `0, 1, 2, ...` is refused, with `cora_recode()` offered as the fix. The
+  Python implementation accepts it and computes: its `"ON-OFF"` algorithm
+  restores a free literal as `{0, ..., levels - 1}` and drops every row
+  outside that set, so coverage sets come out short or empty, and the check
+  deciding which outcomes a prime implicant refers to then succeeds
+  vacuously on the empty set and assigns it every outcome. (This package
+  also restores free literals from the values a condition actually takes,
+  so the two algorithms agree once the coding is right.)
 * **Notation.** Every literal is printed as `CONDITION{value}`. The Python
   implementation prints a binary literal in upper or lower case depending on
   whether 0 is in its value set, which distinguishes nothing when a condition

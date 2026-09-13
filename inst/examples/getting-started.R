@@ -48,7 +48,23 @@ cora_truth_table(cora_context(raw, "O", case_col = "ID",
                               inc_score1 = 0.5, n_cut = 2), raw = TRUE)
 
 ## ---------------------------------------------------------------------------
-## 3. Multi-value conditions
+## 3. Conditions have to be coded 0, 1, 2, ...
+## ---------------------------------------------------------------------------
+
+## as.integer() on a factor numbers the levels from one, which CORA refuses.
+scale <- data.frame(size = as.integer(factor(c("s", "l", "m", "s"),
+                                             levels = c("s", "m", "l"))),
+                    B = c(0, 1, 1, 0),
+                    OUT = c(1, 0, 1, 1))
+range(scale$size)                    # 1 3  -- not what CORA expects
+try(cora_prime_implicants(cora_context(scale, "OUT")))
+
+scale <- cora_recode(scale, "size")  # or cora_recode(scale) to find them itself
+range(scale$size)                    # 0 2
+cora_prime_implicants(cora_context(scale, "OUT"))
+
+## ---------------------------------------------------------------------------
+## 4. Multi-value conditions
 ## ---------------------------------------------------------------------------
 
 tort <- cora_context(gross_carvin, "TORT",
@@ -60,7 +76,7 @@ cora_pi_details(tort)
 cora_system_details(tort)
 
 ## ---------------------------------------------------------------------------
-## 4. Complex effects: several outcomes at once
+## 5. Complex effects: several outcomes at once
 ## ---------------------------------------------------------------------------
 
 mn <- cora_context(swiss_minaret, c("X", "M"), algorithm = "ON-OFF")
@@ -77,7 +93,7 @@ bs <- cora_context(bergschlosser, "PRAET",
 cora_irredundant_sums(bs)
 
 ## ---------------------------------------------------------------------------
-## 5. Configurational data mining
+## 6. Configurational data mining
 ## ---------------------------------------------------------------------------
 
 ## Which pair of conditions already generates a solution?
@@ -87,12 +103,12 @@ cora_data_mining(mccluskey, c("F1", "F2"), len_of_tuple = 2)
 cora_data_mining(df, "OUT", len_of_tuple = 1, automatic = TRUE)
 
 ## ---------------------------------------------------------------------------
-## 6. Logic diagrams
+## 7. Logic diagrams
 ## ---------------------------------------------------------------------------
 
 cora_logigram(cora_irredundant_sums(ctx)[[1]])
 cora_logigram(cora_irredundant_systems(mn)[[1]])
-cora_logigram("A{1}*B{2}+C{0}<=>F")   # the reader also takes "A*b+C<=>F"
+cora_logigram("A{1}*B{2}+C{0}<=>F")   # also takes "A*b+C<=>F" and "A[1]*B[2]"
 
 ## Saving one to a file.
 ## png("figure.png", width = 1100, height = 720, res = 130)
@@ -101,7 +117,7 @@ cora_logigram("A{1}*B{2}+C{0}<=>F")   # the reader also takes "A*b+C<=>F"
 ## dev.off()
 
 ## ---------------------------------------------------------------------------
-## 7. Cross-checking against the Python implementation (optional)
+## 8. Cross-checking against the Python implementation (optional)
 ## ---------------------------------------------------------------------------
 
 if (cora_python_available()) {
