@@ -1,8 +1,8 @@
 ---
-title: "Combinational Regularity Analysis with CORA"
+title: "Combinational Regularity Analysis with CORAtool"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Combinational Regularity Analysis with CORA}
+  %\VignetteIndexEntry{Combinational Regularity Analysis with CORAtool}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -10,7 +10,7 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7,
                       fig.height = 4.5)
-library(CORA)
+library(CORAtool)
 ```
 
 ## The question this method asks
@@ -297,8 +297,8 @@ comparison with the Python implementation, QCA, QCApro and cna in more depth
 than this vignette. It ships in English and in Traditional Chinese:
 
 ```r
-file.show(system.file("docs", "manual_en.md", package = "CORA"))
-file.show(system.file("docs", "manual_zh-TW.md", package = "CORA"))
+file.show(system.file("docs", "manual_en.md", package = "CORAtool"))
+file.show(system.file("docs", "manual_zh-TW.md", package = "CORAtool"))
 ```
 
 `inst/examples/getting-started.R` is the same ground as a runnable script.

@@ -1,6 +1,9 @@
-# CORA
+# CORAtool
 
-CORA (Combinational Regularity Analysis) in R environment.
+Combinational Regularity Analysis (CORA) in an R environment.
+
+The package is named `CORAtool` because CRAN already carries a package
+called `cora`; the method it implements is CORA.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
@@ -25,13 +28,13 @@ implementation is this package's responsibility, not theirs.
 
 ```r
 # install.packages("remotes")
-remotes::install_github("youngchanresearcher/CORA")
+remotes::install_github("youngchanresearcher/CORA")   # repository name
 ```
 
 ## Usage
 
 ```r
-library(CORA)
+library(CORAtool)
 
 df <- data.frame(A   = c(1, 0, 1, 0),
                  B   = c(1, 0, 0, 1),
@@ -139,7 +142,7 @@ implementation can be drawn as they are.
 ## Documentation
 
 ```r
-vignette("cora", package = "CORA")
+vignette("cora", package = "CORAtool")
 ```
 
 walks through an analysis end to end in English: what the method looks for,
@@ -153,8 +156,8 @@ source locations, and how QCA, QCApro and cna handle the same problems. It
 ships in both English and Traditional Chinese:
 
 ```r
-file.show(system.file("docs", "manual_en.md", package = "CORA"))
-file.show(system.file("docs", "manual_zh-TW.md", package = "CORA"))
+file.show(system.file("docs", "manual_en.md", package = "CORAtool"))
+file.show(system.file("docs", "manual_zh-TW.md", package = "CORAtool"))
 ```
 
 `inst/examples/getting-started.R` is a runnable script over the same
@@ -229,9 +232,9 @@ nothing else in the package does.
 ## Citation
 
 Cite this package, the method it implements, and the packages it was
-adapted from. `citation("CORA")` prints all three entries:
+adapted from. `citation("CORAtool")` prints all three entries:
 
-> Chan, Y. (2026). *CORA: Combinational Regularity Analysis*. R package
+> Chan, Y. (2026). *CORAtool: Combinational Regularity Analysis*. R package
 > version 0.1.0.
 
 > Thiem, A., Mkrtchyan, L., & Sebechlebská, Z. (2022). Combinational

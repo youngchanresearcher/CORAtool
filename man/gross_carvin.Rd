@@ -18,7 +18,7 @@ gross_carvin
 }
 \description{
 Multi-value data on tort claims against highway authorities, used as the
-single-outcome example of the CORA package.
+  single-outcome example of the Python CORA package.
 }
 \examples{
 ctx <- cora_context(gross_carvin, "TORT", case_col = "Case")

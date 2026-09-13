@@ -1,4 +1,4 @@
 library(testthat)
-library(CORA)
+library(CORAtool)
 
-test_check("CORA")
+test_check("CORAtool")

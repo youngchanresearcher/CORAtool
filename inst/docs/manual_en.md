@@ -1,6 +1,10 @@
-# CORA user manual
+# CORAtool user manual
 
-Combinational Regularity Analysis — an R package
+Combinational Regularity Analysis (CORA) — an R package
+
+> The package is called `CORAtool` because CRAN already carries a package
+> named `cora`. The method it implements is CORA, and every function keeps
+> its `cora_` prefix.
 
 ---
 
@@ -580,7 +584,7 @@ writing the conclusion.
 ### 5.1 Binary conditions, one outcome
 
 ```r
-library(CORA)
+library(CORAtool)
 
 df <- data.frame(A   = c(1, 0, 1, 0),
                  B   = c(1, 0, 0, 1),
@@ -1084,7 +1088,7 @@ needs no Python at all.**
 ## 9. Citation and licence
 
 ```r
-citation("CORA")
+citation("CORAtool")
 ```
 
 lists three entries: this package, the CORA method paper, and the paper for
@@ -1658,7 +1662,7 @@ to exist.
 | **QCApro** | `A{1}` | case or `~A` (forced off when multi-value) | values `0..max` | — |
 | **cna** | `A=1` | case | **observed values**, positional index | wholly unaffected |
 | **CORA (Python)** | `A{1}` | case | assumes `0..levels-1` | **quietly wrong** (Appendix A) |
-| **CORA (this package)** | `A{1}`, **always** | `A{0}`, no case | **observed values** (following cna) | **error**, naming `cora_recode()` |
+| **CORAtool (this package)** | `A{1}`, **always** | `A{0}`, no case | **observed values** (following cna) | **error**, naming `cora_recode()` |
 
 The reasoning behind the three decisions:
 
@@ -1757,7 +1761,7 @@ The Description field in `DESCRIPTION` therefore ends:
 ### D.2 Citation order
 
 ```r
-citation("CORA")
+citation("CORAtool")
 ```
 
 lists three entries, in this order:

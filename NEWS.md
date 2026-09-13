@@ -1,4 +1,10 @@
-# CORA 0.1.1
+# CORAtool 0.1.1
+
+**The package is now called `CORAtool`.** CRAN carries a package named
+`cora`, and CRAN compares package names without regard to case, so `CORA`
+could not be submitted. Nothing else changed: every function keeps its
+`cora_` prefix, so only the `library()` line in existing scripts needs
+editing.
 
 Fixes for defects found by adversarial and randomised testing, and four
 choices about what to do when an analysis gets large.
@@ -78,7 +84,7 @@ changes is which input is refused, and how.
   conditions, complex effects, diagrams, choosing an algorithm, the zero-based
   coding requirement, and what to do when there are more solutions than can be
   reported. The Traditional Chinese manual remains the fuller reference.
-* `citation("CORA")` reports the installed version rather than a version
+* `citation("CORAtool")` reports the installed version rather than a version
   string fixed when the file was written, and `inst/CITATION` is pure ASCII
   so it does not depend on an encoding being declared elsewhere.
 * New property tests check what must hold of any correct output — coverage,

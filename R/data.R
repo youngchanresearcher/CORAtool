@@ -1,7 +1,7 @@
 #' Swiss minaret referendum
 #'
 #' Cantonal data on the 2009 Swiss referendum on the construction of
-#' minarets, used as the multi-outcome example of the CORA package.
+#' minarets, used as the multi-outcome example of the Python CORA package.
 #'
 #' @format A data frame with 11 rows and 6 columns: the conditions `A`, `L`,
 #'   `S` and `T`, and the outcomes `X` and `M`.
@@ -15,7 +15,7 @@
 #' Tort liability of highway authorities
 #'
 #' Multi-value data on tort claims against highway authorities, used as the
-#' single-outcome example of the CORA package.
+#'   single-outcome example of the Python CORA package.
 #'
 #' @format A data frame with 18 rows: the case label `Case`, the conditions
 #'   `PRIC`, `LENG`, `UPSI`, `DOSI`, `RISK`, `FRFL` and `MIMA`, and the

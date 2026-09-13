@@ -9,7 +9,7 @@ citHeader(paste("To cite CORA in publications, cite this package, the method",
 
 bibentry(
   bibtype = "Manual",
-  title   = "CORA: Combinational Regularity Analysis",
+  title   = "CORAtool: Combinational Regularity Analysis",
   author  = person("Young", "Chan"),
   year    = "2026",
   note    = sprintf("R package version %s", meta$Version),

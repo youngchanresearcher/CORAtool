@@ -17,7 +17,7 @@ swiss_minaret
 }
 \description{
 Cantonal data on the 2009 Swiss referendum on the construction of
-minarets, used as the multi-outcome example of the CORA package.
+minarets, used as the multi-outcome example of the Python CORA package.
 }
 \examples{
 ctx <- cora_context(swiss_minaret, c("X", "M"), algorithm = "ON-OFF")

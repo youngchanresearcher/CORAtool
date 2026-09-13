@@ -1,5 +1,5 @@
 ## ---------------------------------------------------------------------------
-## CORA 0.1.1 acceptance test
+## CORAtool 0.1.1 acceptance test
 ##
 ## Run this after installing the package. It exercises every exported
 ## function, checks the behaviours introduced in 0.1.1, and confirms that the
@@ -10,7 +10,7 @@
 ##   source("tools/acceptance.R")
 ## ---------------------------------------------------------------------------
 
-library(CORA)
+library(CORAtool)
 
 PASS <- 0L; FAIL <- 0L; FAILED <- character(0)
 
@@ -63,18 +63,18 @@ hdr <- function(x) cat("\n== ", x, " ", strrep("=", max(0, 60 - nchar(x))),
 hdr("installation")
 
 chk("package version is 0.1.1",
-    { stopifnot(as.character(packageVersion("CORA")) == "0.1.1"); TRUE })
+    { stopifnot(as.character(packageVersion("CORAtool")) == "0.1.1"); TRUE })
 chk("both manuals are installed",
-    { f <- list.files(system.file("docs", package = "CORA"))
+    { f <- list.files(system.file("docs", package = "CORAtool"))
       stopifnot(all(c("manual_en.md", "manual_zh-TW.md") %in% f)); f })
 chk("the vignette is registered",
-    { v <- vignette(package = "CORA")$results
+    { v <- vignette(package = "CORAtool")$results
       stopifnot("cora" %in% v[, "Item"]); v[, "Item"] })
 chk("citation() reports the installed version",
-    { n <- citation("CORA")[[1]]$note
+    { n <- citation("CORAtool")[[1]]$note
       stopifnot(grepl("0.1.1", n)); n })
 chk("the runnable tour ships with the package",
-    { f <- system.file("examples", "getting-started.R", package = "CORA")
+    { f <- system.file("examples", "getting-started.R", package = "CORAtool")
       stopifnot(nzchar(f)); basename(f) })
 
 ## ---------------------------------------------------------------------------
@@ -386,16 +386,16 @@ hdr("the package's own test suite")
 ## The test suite ships in the source tarball, not in an ordinary install, so
 ## it can only be run from here if the package was installed with
 ## --install-tests. R CMD check runs it either way.
-have_tests <- nzchar(system.file("tests", package = "CORA"))
+have_tests <- nzchar(system.file("tests", package = "CORAtool"))
 if (!requireNamespace("testthat", quietly = TRUE)) {
   cat("skip testthat is not installed\n")
 } else if (!have_tests) {
   cat("skip the tests are not in this install.\n")
-  cat("     Install with tests:  R CMD INSTALL --install-tests CORA_0.1.1.tar.gz\n")
-  cat("     Or run them through: R CMD check CORA_0.1.1.tar.gz\n")
+  cat("     Install with tests:  R CMD INSTALL --install-tests CORAtool_0.1.1.tar.gz\n")
+  cat("     Or run them through: R CMD check CORAtool_0.1.1.tar.gz\n")
 } else {
   cat("running testthat::test_package(\"CORA\") ...\n")
-  tt <- try(testthat::test_package("CORA", reporter = "silent"), silent = TRUE)
+  tt <- try(testthat::test_package("CORAtool", reporter = "silent"), silent = TRUE)
   if (inherits(tt, "try-error")) {
     cat(sprintf("%-4s %-56s %s\n", "FAIL", "package test suite",
                 conditionMessage(attr(tt, "condition"))))

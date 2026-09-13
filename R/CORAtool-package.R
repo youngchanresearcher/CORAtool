@@ -1,4 +1,4 @@
-#' CORA: Combinational Regularity Analysis
+#' CORAtool: Combinational Regularity Analysis
 #'
 #' An R implementation of Combinational Regularity Analysis (CORA), a member
 #' of the family of configurational comparative methods. CORA searches data
@@ -7,7 +7,7 @@
 #' switching circuit analysis. It handles multi-value conditions and, unlike
 #' related methods, structures with simple as well as complex effects.
 #'
-#' The package is a port of the Python packages `CORA` and `LOGIGRAM` by
+#' CORAtool is a port of the Python packages `CORA` and `LOGIGRAM` by
 #' Sebechlebská, Mkrtchyan and Thiem. It computes in plain R and needs no
 #' Python installation; [cora_python_available()] and the functions around it
 #' exist only to cross-check results against the original implementation.

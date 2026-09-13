@@ -1,6 +1,8 @@
-# CORA 使用說明書
+# CORAtool 使用說明書
 
-Combinational Regularity Analysis（組合規律性分析）R 套件
+Combinational Regularity Analysis（組合規律性分析，CORA）R 套件
+
+> 套件叫 `CORAtool`，是因為 CRAN 上已經有一個叫 `cora` 的套件。它實作的方法仍然叫 CORA，函數也仍然是 `cora_` 開頭。
 
 ---
 
@@ -456,7 +458,7 @@ cora_pi_details(ctx)
 ### 5.1 二元條件、單一結果
 
 ```r
-library(CORA)
+library(CORAtool)
 
 df <- data.frame(A   = c(1, 0, 1, 0),
                  B   = c(1, 0, 0, 1),
@@ -831,7 +833,7 @@ if (cora_python_available()) {
 ## 9. 引用與授權
 
 ```r
-citation("CORA")
+citation("CORAtool")
 ```
 
 會列出三筆：本套件、CORA 方法論文、原 Python 套件論文。**使用 CORA 做分析時，方法論文一定要引用**，不論用哪個軟體跑的。作者角色的安排與理由見附錄 D。
@@ -1260,8 +1262,8 @@ cna 的做法最乾淨，也最值得學：**它根本不假設值從 0 開始�
 | **QCA** | `A[1]`（可切 `A{1}`） | `~A` | `0` 為哨兵，值 +1；層級 = `max + 1` | 多出幽靈組態，不報錯 |
 | **QCApro** | `A{1}` | 大小寫或 `~A`（多值時強制關掉） | 值 `0..max` | — |
 | **cna** | `A=1` | 大小寫 | **實際觀察值**，位置索引 | 完全不受影響 |
-| **CORA（Python）** | `A{1}` | 大小寫 | 假設 `0..levels-1` | **安靜地算錯**（附錄 A） |
-| **CORA（本套件）** | `A{1}`，**一律** | `A{0}`，不用大小寫 | **實際觀察值**（學 cna） | **報錯**，並指示 `cora_recode()` |
+| **CORA（Python 版）** | `A{1}` | 大小寫 | 假設 `0..levels-1` | **安靜地算錯**（附錄 A） |
+| **CORAtool（本套件）** | `A{1}`，**一律** | `A{0}`，不用大小寫 | **實際觀察值**（學 cna） | **報錯**，並指示 `cora_recode()` |
 
 三個決定的依據：
 
@@ -1326,7 +1328,7 @@ person("Alrik", "Thiem", role = "cph", ...)
 ### D.2 引用順序
 
 ```r
-citation("CORA")
+citation("CORAtool")
 ```
 
 會列出三筆，順序是：

@@ -1,10 +1,10 @@
-## CORA: a runnable tour of the package.
+## CORAtool: a runnable tour of the package.
 ##
 ## Every block here stands on its own. Run it top to bottom, or pick the
 ## section that matches what you need. See inst/docs/manual_zh-TW.md for the
 ## reasoning behind each step.
 
-library(CORA)
+library(CORAtool)
 
 ## ---------------------------------------------------------------------------
 ## 1. One binary outcome
