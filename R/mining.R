@@ -55,7 +55,8 @@ cora_data_mining <- function(data,
   if (is.null(input_labels)) {
     input_labels <- setdiff(names(data), c(plain_outputs, case_col))
   }
-  if (len_of_tuple < 1L || len_of_tuple > length(input_labels)) {
+  len_of_tuple <- check_count(len_of_tuple, "len_of_tuple")
+  if (len_of_tuple > length(input_labels)) {
     stopf("`len_of_tuple` must lie between 1 and %d.", length(input_labels))
   }
   ## Checked here as well as in the context: the per-tuple loop treats a

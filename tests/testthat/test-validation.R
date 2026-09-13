@@ -123,3 +123,45 @@ test_that("a literal that cannot be drawn is refused, not approximated", {
   expect_silent(cora_logigram("A{1}+A{0}<=>F"))
   expect_silent(cora_logigram("A*B+a*C<=>F"))
 })
+
+test_that("len_of_tuple is a whole number in range", {
+  d <- data.frame(A = c(1, 0, 1, 0, 1, 0), B = c(1, 1, 0, 0, 1, 0),
+                  C = c(0, 1, 1, 0, 1, 1), D = c(1, 1, 0, 1, 0, 0),
+                  O = c(1, 1, 0, 0, 1, 1))
+  ## 1.5 used to reach combn(), which truncates it to 1 and mines a tuple
+  ## length nobody asked for.
+  expect_error(cora_data_mining(d, "O", len_of_tuple = 1.5), "len_of_tuple")
+  expect_error(cora_data_mining(d, "O", len_of_tuple = NA), "len_of_tuple")
+  expect_error(cora_data_mining(d, "O", len_of_tuple = 0), "len_of_tuple")
+  expect_error(cora_data_mining(d, "O", len_of_tuple = 5), "len_of_tuple")
+  expect_equal(nrow(cora_data_mining(d, "O", len_of_tuple = 2)), 6L)
+
+  ## The per-tuple loop treats a failed analysis as a tuple with no solution,
+  ## so an unusable threshold has to be refused before that loop starts.
+  expect_error(cora_data_mining(d, "O", len_of_tuple = 2, n_cut = NA), "n_cut")
+  expect_error(cora_data_mining(d, "O", len_of_tuple = 2, inc_score1 = NA),
+               "inc_score1")
+})
+
+test_that("reordering the data changes nothing but the reading order", {
+  d <- data.frame(A = c(1, 0, 1, 0, 1, 0), B = c(1, 1, 0, 0, 1, 0),
+                  C = c(0, 1, 1, 0, 1, 1), D = c(1, 1, 0, 1, 0, 0),
+                  O = c(1, 1, 0, 0, 1, 1))
+  literals <- function(x, ...) {
+    sort(vapply(cora_prime_implicants(cora_context(x, "O", ...)),
+                function(i) paste(sort(strsplit(sub("^#", "", i$implicant),
+                                                "*", fixed = TRUE)[[1L]]),
+                                  collapse = "*"), character(1)))
+  }
+  set.seed(9)
+  shuffled_rows <- d[sample(nrow(d)), ]
+  reordered_cols <- d[, c("C", "A", "D", "B", "O")]
+  for (alg in c("ON-DC", "ON-OFF")) {
+    expect_equal(literals(shuffled_rows, algorithm = alg),
+                 literals(d, algorithm = alg))
+    ## Literals inside a term print in column order, as they do in the Python
+    ## implementation, so the terms are compared as sets of literals.
+    expect_equal(literals(reordered_cols, algorithm = alg),
+                 literals(d, algorithm = alg))
+  }
+})
