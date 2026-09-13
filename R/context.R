@@ -54,8 +54,15 @@ cora_context <- function(data,
                          rename_columns = FALSE,
                          algorithm = c("ON-DC", "ON-OFF")) {
   if (!is.data.frame(data)) stopf("`data` must be a data frame.")
-  if (!is.character(output_labels) || length(output_labels) == 0L) {
-    stopf("`output_labels` must be a non-empty character vector.")
+  if (!is.character(output_labels) || length(output_labels) == 0L ||
+      anyNA(output_labels) || !all(nzchar(output_labels))) {
+    stopf(paste0("`output_labels` must be a character vector of column ",
+                 "names, with no empty or missing entries."))
+  }
+  dup_out <- unique(output_labels[duplicated(output_labels)])
+  if (length(dup_out)) {
+    stopf("`output_labels` names the same outcome twice: %s.",
+          paste(sQuote(dup_out, q = FALSE), collapse = ", "))
   }
   algorithm <- match.arg(algorithm)
   n_cut <- check_count(n_cut, "n_cut")
@@ -121,6 +128,18 @@ validate_context <- function(ctx) {
   }
   if (nrow(data) == 0L) stopf("`data` has no rows.")
 
+  ## A case column that names nothing is a typo, and ignoring it silently
+  ## drops the case labels from every table that would have carried them.
+  if (!is.null(ctx$case_col)) {
+    if (length(ctx$case_col) != 1L || !is.character(ctx$case_col)) {
+      stopf("`case_col` must name a single column, or be NULL.")
+    }
+    if (!ctx$case_col %in% names(data)) {
+      stopf("Case column not found in the data: %s.",
+            sQuote(ctx$case_col, q = FALSE))
+    }
+  }
+
   inputs <- if (is.null(ctx$input_labels)) {
     setdiff(names(data), ctx$case_col)
   } else {
@@ -131,6 +150,16 @@ validate_context <- function(ctx) {
     stopf("Input column(s) not found in the data: %s.",
           paste(missing_cols, collapse = ", "))
   }
+  dup_inputs <- unique(inputs[duplicated(inputs)])
+  if (length(dup_inputs)) {
+    stopf("`input_labels` names the same column twice: %s.",
+          paste(sQuote(dup_inputs, q = FALSE), collapse = ", "))
+  }
+  in_case <- intersect(inputs, ctx$case_col)
+  if (length(in_case)) {
+    stopf("Case column %s also named as a condition.",
+          sQuote(in_case[[1L]], q = FALSE))
+  }
   for (col in inputs) {
     v <- data[[col]]
     if (!is.numeric(v) || any(is.na(v)) || any(v != as.integer(v))) {
@@ -138,9 +167,20 @@ validate_context <- function(ctx) {
     }
   }
 
-  ## Outputs: either all multi-value declarations, or all plain names.
-  if (all(grepl(OUTPUT_PATTERN, ctx$output_labels))) {
+  ## Outputs: either all multi-value declarations, or all plain names. A
+  ## mixture would otherwise fall through to the plain branch and report the
+  ## declaration as a column name that is not in the data.
+  declared <- grepl(OUTPUT_PATTERN, ctx$output_labels)
+  if (all(declared)) {
     ctx$multivalue_output <- TRUE
+  } else if (any(declared)) {
+    stopf(paste0("Outcomes are declared inconsistently: %s %s values in ",
+                 "curly brackets and %s %s not. Declare the analysed values ",
+                 "for every outcome, or for none of them."),
+          paste(sQuote(ctx$output_labels[declared], q = FALSE), collapse = ", "),
+          if (sum(declared) == 1L) "gives" else "give",
+          paste(sQuote(ctx$output_labels[!declared], q = FALSE), collapse = ", "),
+          if (sum(!declared) == 1L) "does" else "do")
   } else if (!all(grepl(REGULAR_OUTPUT, ctx$output_labels))) {
     stopf("Unsupported output entered!")
   }
@@ -191,6 +231,15 @@ validate_context <- function(ctx) {
     stopf("No input columns were found.")
   }
 
+  ## An outcome used as one of its own conditions explains itself perfectly
+  ## and says nothing about anything else, so the answer is never the one
+  ## being looked for. It can only arrive through an explicit input_labels.
+  self <- intersect(ctx$input_labels, ctx$output_labels)
+  if (length(self)) {
+    stopf(paste0("Outcome column(s) %s also named as conditions. An outcome ",
+                 "used as its own condition explains only itself."),
+          paste(sQuote(self, q = FALSE), collapse = ", "))
+  }
   input_data <- ctx$data[ctx$input_labels]
   if (is.null(ctx$input_data)) ctx$input_data <- input_data
 

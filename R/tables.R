@@ -164,6 +164,7 @@ final_inc_score <- function(ctx) {
 
 #' @export
 cora_describe.cora_system <- function(x, cov = 1, ...) {
+  cov <- check_fraction(cov, "cov")
   ctx <- x$ctx
   solution_cov <- cora_coverage_score(x)
   solution_inc <- cora_inclusion_score(x)
@@ -184,6 +185,7 @@ cora_describe.cora_system <- function(x, cov = 1, ...) {
 
 #' @export
 cora_describe.cora_system_multi <- function(x, cov = 1, ...) {
+  cov <- check_fraction(cov, "cov")
   ctx <- x$ctx
   threshold <- final_inc_score(ctx)
   solution_cov <- cora_coverage_score(x)

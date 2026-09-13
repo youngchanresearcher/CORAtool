@@ -165,3 +165,72 @@ test_that("reordering the data changes nothing but the reading order", {
                  literals(d, algorithm = alg))
   }
 })
+
+test_that("a question that cannot mean what it says is refused", {
+  d <- data.frame(ID = letters[1:6], A = c(1, 0, 1, 0, 1, 0),
+                  B = c(1, 1, 0, 0, 1, 0), C = c(0, 1, 1, 0, 1, 1),
+                  O = c(1, 1, 0, 0, 1, 1))
+
+  ## An outcome used as one of its own conditions returns "#O{1}" — it
+  ## explains itself perfectly and says nothing about anything else.
+  expect_error(
+    cora_truth_table(cora_context(d, "O", case_col = "ID",
+                                  input_labels = c("A", "O"))),
+    "explains only itself")
+  expect_error(
+    cora_truth_table(cora_context(d, "O", case_col = "ID",
+                                  input_labels = c("A", "ID"))),
+    "Case column")
+
+  ## A case column naming nothing used to be ignored, losing the labels.
+  expect_error(cora_truth_table(cora_context(d, "O", case_col = "NOPE")),
+               "Case column not found")
+  expect_error(cora_truth_table(cora_context(d, "O", case_col = c("ID", "A"))),
+               "case_col")
+  expect_error(cora_truth_table(cora_context(d, "O", case_col = 1)), "case_col")
+  expect_error(
+    cora_truth_table(cora_context(d, "O", case_col = "ID",
+                                  input_labels = c("A", "A"))),
+    "same column twice")
+
+  expect_error(cora_context(d, ""), "output_labels")
+  expect_error(cora_context(d, NA_character_), "output_labels")
+  expect_error(cora_context(d, c("O", "O")), "same outcome twice")
+
+  ## Mixing declared and undeclared outcomes used to report the declaration
+  ## as a column name missing from the data.
+  dm <- data.frame(A = c(0, 0, 1, 1, 2, 2), B = c(0, 1, 0, 1, 0, 1),
+                   Y1 = c(1, 0, 1, 0, 1, 1), Y3 = c(0, 1, 2, 0, 1, 2))
+  expect_error(cora_truth_table(cora_context(dm, c("Y1", "Y3{1,2}"))),
+               "declared inconsistently")
+  expect_equal(nrow(cora_truth_table(cora_context(dm, c("Y1{1}", "Y3{1,2}")))),
+               6L)
+
+  sol <- cora_irredundant_sums(cora_context(gross_carvin, "TORT",
+                                            case_col = "Case",
+                                            algorithm = "ON-OFF"))[[1L]]
+  expect_error(cora_describe(sol, cov = 2), "cov")
+  expect_error(cora_describe(sol, cov = NA), "cov")
+})
+
+test_that("the inclusion band puts the middle where U says", {
+  ## Four cases per configuration, so an inclusion score of 0.5 lands inside
+  ## a 0.4-0.9 band and U alone decides what it becomes.
+  band <- data.frame(A = rep(c(0, 0, 1, 1), each = 4),
+                     B = rep(c(0, 1, 0, 1), each = 4),
+                     O = c(1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0))
+  raw <- cora_truth_table(
+    cora_context(band, "O", inc_score1 = 0.9, inc_score2 = 0.4, U = 1),
+    raw = TRUE)
+  expect_equal(raw$Inc_O, c(0.5, 1, 0, 0.5))
+
+  band_at <- function(u) {
+    cora_truth_table(cora_context(band, "O", inc_score1 = 0.9,
+                                  inc_score2 = 0.4, U = u))$O
+  }
+  expect_equal(band_at(1L), c(1L, 1L, 0L, 1L))
+  expect_equal(band_at(0L), c(0L, 1L, 0L, 0L))
+  ## Without a band the single threshold decides, as U = 0 does here.
+  expect_equal(cora_truth_table(cora_context(band, "O", inc_score1 = 0.9))$O,
+               band_at(0L))
+})
