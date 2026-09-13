@@ -48,7 +48,9 @@ test_that("multi-value multi-outcome data gives the documented implicants", {
   for (alg in c("ON-DC", "ON-OFF")) {
     ctx <- cora_context(df, c("OUT1{1,2}", "OUT2{1}", "OUT3{1,0}"),
                         algorithm = alg)
-    pis <- cora_prime_implicants(ctx)
+    ## B is coded {1, 2} in the reference example, which the package warns
+    ## about; the prime implicants are still the documented ones.
+    pis <- suppressWarnings(cora_prime_implicants(ctx))
     expect_setequal(
       vapply(pis, function(p) p$implicant, character(1)),
       c("C{2}", "A{1}", "B{1}", "D{1}", "C{0}", "B{2}*C{1}", "A{0}",

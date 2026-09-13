@@ -51,3 +51,23 @@ test_that("inc_score2 requires U", {
     "U must be specified"
   )
 })
+
+test_that("a condition that skips zero is flagged", {
+  ## CORA expects 0, 1, 2, ... The ON-OFF algorithm builds the free-literal
+  ## domain as {0, ..., levels - 1}, so a condition coded {1, 2} silently
+  ## loses the rows it cannot represent.
+  df <- data.frame(A = c(1, 1, 0, 0), B = c(2, 1, 2, 2),
+                   C = c(0, 1, 1, 2), OUT = c(1, 0, 1, 1))
+  expect_warning(cora_truth_table(cora_context(df, "OUT")),
+                 "not coded from 0 upwards")
+  expect_warning(cora_truth_table(cora_context(df, "OUT")), "'B'")
+
+  ok <- data.frame(A = c(1, 0, 1, 0), B = c(1, 0, 0, 1), OUT = c(1, 1, 0, 1))
+  expect_no_warning(cora_truth_table(cora_context(ok, "OUT")))
+})
+
+test_that("the warning names every offending condition", {
+  df <- data.frame(A = c(2, 1, 2, 1), B = c(3, 4, 3, 4),
+                   C = c(0, 1, 1, 0), OUT = c(1, 0, 1, 1))
+  expect_warning(cora_truth_table(cora_context(df, "OUT")), "'A', 'B'")
+})

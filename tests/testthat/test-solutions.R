@@ -53,7 +53,7 @@ test_that("multi-outcome systems cover every outcome", {
                    OUT2 = c(2, 0, 1, 1), OUT3 = c(1, 0, 2, 1))
   ctx <- cora_context(df, c("OUT1{1,2}", "OUT2{1}", "OUT3{1,0}"),
                       algorithm = "ON-OFF")
-  systems <- cora_irredundant_systems(ctx)
+  systems <- suppressWarnings(cora_irredundant_systems(ctx))
   expect_setequal(
     vapply(systems, function(s) {
       paste(vapply(s$system_multiple, function(per_out) {

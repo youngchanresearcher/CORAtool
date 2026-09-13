@@ -62,6 +62,12 @@ of them count as positive:
 | `case_col` | column holding case identifiers |
 | `algorithm` | `"ON-DC"` (Quine-McCluskey over positive and don't care terms) or `"ON-OFF"` (McCluskey's modified algorithm over positive and negative terms) |
 
+Conditions must be coded from zero upwards. A condition coded `{1, 2}`
+rather than `{0, 1}` makes the `"ON-OFF"` algorithm build the free-literal
+domain as `{0, 1}` and drop every row it cannot represent, so its coverage
+sets and scores come out wrong while `"ON-DC"` stays correct. The package
+warns when it sees such a coding; the Python implementation does not.
+
 ### Multi-value conditions and complex effects
 
 Outcome values that count as positive are declared in curly brackets. With

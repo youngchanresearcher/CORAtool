@@ -52,11 +52,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Young Chan \email{youngchanresearcher@gmail.com} (Author of the R implementation) [copyright holder]
 
-Authors:
+Other contributors:
 \itemize{
-  \item Zuzana Sebechlebsk<U+00E1> (Author of the original Python implementation) [copyright holder]
-  \item Lusine Mkrtchyan (Author of the original Python implementation) [copyright holder]
-  \item Alrik Thiem (Author of the original Python implementation) [copyright holder]
+  \item Zuzana Sebechlebsk<U+00E1> (Copyright holder of the original Python implementation) [copyright holder]
+  \item Lusine Mkrtchyan (Copyright holder of the original Python implementation) [copyright holder]
+  \item Alrik Thiem (Copyright holder of the original Python implementation) [copyright holder]
 }
 
 }

@@ -35,7 +35,8 @@ test_that("a tuple whose only solution is a tautology scores zero", {
   ## explains nothing and must not be ranked alongside a real solution.
   data <- data.frame(A = c(1, 1, 0, 0), B = c(2, 1, 2, 2),
                      C = c(0, 1, 1, 2), OUT = c(1, 1, 0, 1))
-  res <- cora_data_mining(data, "OUT", len_of_tuple = 2, inc_score1 = 0.5)
+  res <- suppressWarnings(
+    cora_data_mining(data, "OUT", len_of_tuple = 2, inc_score1 = 0.5))
 
   ab <- res[res$Combination == "A, B", ]
   expect_equal(ab$Nr_of_systems, 0L)
