@@ -62,6 +62,27 @@ prime_to_case <- function(input) {
   }, character(1), USE.NAMES = FALSE)
 }
 
+## A value written in brackets has to survive the trip to integer. Left
+## unchecked, one too large for an R integer becomes NA and the literal is
+## then drawn as though the condition had never been mentioned.
+parse_literal_value <- function(txt, literal) {
+  v <- suppressWarnings(as.integer(txt))
+  if (is.na(v)) {
+    stopf(paste0("The value in \"%s\" is too large to be a condition value. ",
+                 "CORA values are small whole numbers: 0, 1, 2, ..."), literal)
+  }
+  v
+}
+
+## The same condition cannot take two values in one conjunction. Silently
+## keeping the last one would draw a diagram for an expression nobody wrote.
+check_literal_clash <- function(old, new, variable, term) {
+  if (is.na(old) || identical(old, new)) return(invisible(NULL))
+  stopf(paste0("The term \"%s\" gives %s two values (%d and %d). A ",
+               "conjunction that contradicts itself covers no case and has ",
+               "no diagram."), term, variable, old, new)
+}
+
 ## Parses one or more DNF functions into variables, implicants and outputs.
 logigram_parse <- function(input, notation = c("case", "prime")) {
   notation <- match.arg(notation)
@@ -112,15 +133,21 @@ logigram_parse <- function(input, notation = c("case", "prime")) {
         parsed <- regmatches(lits, regexec("^(.+)\\{([0-9]+)\\}$", lits))
         for (p in parsed) {
           if (length(p) == 3L) {
-            values[match(p[[2L]], variables)] <- as.integer(p[[3L]])
+            j <- match(p[[2L]], variables)
+            v <- parse_literal_value(p[[3L]], p[[1L]])
+            check_literal_clash(values[[j]], v, variables[[j]], term)
+            values[[j]] <- v
           }
         }
       } else {
         for (i in seq_along(variables)) {
-          if (toupper(variables[[i]]) %in% toupper(lits)) {
-            values[[i]] <- as.integer(
-              any(lits == toupper(variables[[i]]))
-            )
+          hit <- toupper(lits) == toupper(variables[[i]])
+          if (any(hit)) {
+            v <- as.integer(any(lits[hit] == toupper(variables[[i]])))
+            if (length(unique(lits[hit])) > 1L) {
+              check_literal_clash(1L - v, v, variables[[i]], term)
+            }
+            values[[i]] <- v
           }
         }
       }

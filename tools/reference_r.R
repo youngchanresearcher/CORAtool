@@ -69,7 +69,12 @@ specs <- jsonlite::fromJSON(args[[1]], simplifyVector = FALSE)
 res <- list()
 for (nm in names(specs)) {
   t0 <- proc.time()[[3]]
-  res[[nm]] <- run(specs[[nm]])
-  message(sprintf("%-40s %6.1fs", nm, proc.time()[[3]] - t0))
+  ## A refusal is a result too: the two implementations disagree about which
+  ## inputs are analysable at all, and halting here would hide every spec
+  ## after the first one that either side declines.
+  res[[nm]] <- tryCatch(run(specs[[nm]]),
+                        error = function(e) list(error = conditionMessage(e)))
+  message(sprintf("%-40s %6.1fs%s", nm, proc.time()[[3]] - t0,
+                  if (!is.null(res[[nm]]$error)) "  [refused]" else ""))
 }
 cat(jsonlite::toJSON(res, auto_unbox = FALSE, pretty = 1, null = "null"))

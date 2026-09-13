@@ -58,6 +58,19 @@ cora_context <- function(data,
     stopf("`output_labels` must be a non-empty character vector.")
   }
   algorithm <- match.arg(algorithm)
+  n_cut <- check_count(n_cut, "n_cut")
+  inc_score1 <- check_fraction(inc_score1, "inc_score1")
+  if (!is.null(inc_score2)) {
+    inc_score2 <- check_fraction(inc_score2, "inc_score2")
+    if (inc_score2 > inc_score1) {
+      stopf(paste0("inc_score2 (%s) must not exceed inc_score1 (%s): it is ",
+                   "the lower edge of the band, not the upper one."),
+            format(inc_score2), format(inc_score1))
+    }
+  }
+  if (!is.null(U) && !(length(U) == 1L && !is.na(U) && U %in% c(0, 1))) {
+    stopf("U must be 0 or 1.")
+  }
 
   ctx <- new.env(parent = emptyenv())
   ctx$data <- data
@@ -95,6 +108,18 @@ cora_context <- function(data,
 validate_context <- function(ctx) {
   if (ctx$validated) return(invisible(ctx))
   data <- ctx$data
+
+  ## Columns are selected by name throughout. Duplicate names would make that
+  ## selection pick one column and silently drop the other, and a condition
+  ## sharing the outcome's name would have the outcome read from the wrong
+  ## column, so both are refused rather than resolved by guesswork.
+  dup <- unique(names(data)[duplicated(names(data))])
+  if (length(dup)) {
+    stopf(paste0("Duplicated column name(s) in the data: %s. Give every ",
+                 "column its own name; CORA selects columns by name."),
+          paste(sQuote(dup, q = FALSE), collapse = ", "))
+  }
+  if (nrow(data) == 0L) stopf("`data` has no rows.")
 
   inputs <- if (is.null(ctx$input_labels)) {
     setdiff(names(data), ctx$case_col)

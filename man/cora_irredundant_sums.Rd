@@ -10,7 +10,10 @@ cora_irredundant_sums(ctx, max_depth = NULL)
 \item{ctx}{A [cora_context()] with exactly one outcome.}
 
 \item{max_depth}{Optional upper bound on the number of prime implicants a
-solution may contain.}
+solution may contain. Solutions keep the number they have in the
+unrestricted set, so a restricted call can return `M2` and `M5`; the
+restriction applies to the call, never to the context, so the next call
+without `max_depth` still sees every solution.}
 }
 \value{
 A list of solutions, of class `cora_systems`.
@@ -27,4 +30,7 @@ The number of irredundant sums can grow exponentially with the size
 df <- data.frame(A = c(1, 0, 1, 0), B = c(1, 0, 0, 1),
                  C = c(0, 1, 1, 0), OUT = c(1, 1, 0, 1))
 cora_irredundant_sums(cora_context(df, "OUT"))
+
+## Only the solutions built from at most one prime implicant.
+cora_irredundant_sums(cora_context(df, "OUT"), max_depth = 1)
 }

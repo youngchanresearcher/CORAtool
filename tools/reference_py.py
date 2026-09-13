@@ -70,6 +70,17 @@ def run(spec):
     return out
 
 
+def run_or_error(spec):
+    """A refusal is a result too: the two implementations disagree about which
+    inputs are analysable at all, and raising here would hide every spec after
+    the first one that either side declines."""
+    try:
+        return run(spec)
+    except Exception as exc:                       # noqa: BLE001
+        return {"error": "{}: {}".format(type(exc).__name__, exc)}
+
+
 if __name__ == "__main__":
     specs = json.load(open(sys.argv[1]))
-    print(json.dumps({k: run(v) for k, v in specs.items()}, indent=1, sort_keys=True))
+    print(json.dumps({k: run_or_error(v) for k, v in specs.items()},
+                     indent=1, sort_keys=True))

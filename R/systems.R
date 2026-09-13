@@ -176,7 +176,10 @@ print.cora_systems <- function(x, ...) {
 #'
 #' @param ctx A [cora_context()] with exactly one outcome.
 #' @param max_depth Optional upper bound on the number of prime implicants a
-#'   solution may contain.
+#'   solution may contain. Solutions keep the number they have in the
+#'   unrestricted set, so a restricted call can return `M2` and `M5`; the
+#'   restriction applies to the call, never to the context, so the next call
+#'   without `max_depth` still sees every solution.
 #'
 #' @return A list of solutions, of class `cora_systems`.
 #'
@@ -187,30 +190,34 @@ print.cora_systems <- function(x, ...) {
 #' df <- data.frame(A = c(1, 0, 1, 0), B = c(1, 0, 0, 1),
 #'                  C = c(0, 1, 1, 0), OUT = c(1, 1, 0, 1))
 #' cora_irredundant_sums(cora_context(df, "OUT"))
+#'
+#' ## Only the solutions built from at most one prime implicant.
+#' cora_irredundant_sums(cora_context(df, "OUT"), max_depth = 1)
 #' @export
 cora_irredundant_sums <- function(ctx, max_depth = NULL) {
   stopifnot(inherits(ctx, "cora_context"))
-  if (!is.null(ctx$irredundant_sums)) return(ctx$irredundant_sums)
   if (ctx$multi_output) {
     stopf(paste0("Irredundant sums are not supported in multi-output mode. ",
                  "Use cora_irredundant_systems()."))
   }
-  pis <- cora_prime_implicants(ctx)
-  if (length(pis) == 0L) {
-    out <- structure(list(), class = "cora_systems")
-    return(out)
+  ## What is cached is the unrestricted set. A max_depth call filters a copy
+  ## on the way out, so it neither reads a filtered list as if it were the
+  ## whole set nor leaves one behind for cora_pi_details() and friends.
+  if (is.null(ctx$irredundant_sums)) {
+    pis <- cora_prime_implicants(ctx)
+    sums <- if (length(pis) == 0L) list()
+            else cora_petrick(lapply(pis, function(p) p$coverage))$sums
+    all_sums <- lapply(seq_along(sums), function(i) {
+      new_irredundant_system(ctx, pis[sums[[i]]], i)
+    })
+    class(all_sums) <- "cora_systems"
+    ctx$irredundant_sums <- all_sums
   }
-  solved <- cora_petrick(lapply(pis, function(p) p$coverage))
-  sums <- solved$sums
-  if (!is.null(max_depth)) {
-    sums <- Filter(function(s) length(s) <= max_depth, sums)
-  }
-  out <- lapply(seq_along(sums), function(i) {
-    new_irredundant_system(ctx, pis[sums[[i]]], i)
-  })
-  class(out) <- "cora_systems"
-  ctx$irredundant_sums <- out
-  out
+  out <- ctx$irredundant_sums
+  if (is.null(max_depth)) return(out)
+  max_depth <- check_count(max_depth, "max_depth")
+  keep <- vapply(out, function(s) length(s$system) <= max_depth, logical(1))
+  structure(out[keep], class = "cora_systems")
 }
 
 #' Irredundant systems of a multi-outcome analysis

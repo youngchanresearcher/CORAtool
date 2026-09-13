@@ -101,3 +101,30 @@ cartesian_product <- function(dims) {
 unique_in_order <- function(x) unique(x)
 
 stopf <- function(...) stop(sprintf(...), call. = FALSE)
+
+## Argument checks. NA is the case worth spelling out: left unchecked it
+## propagates into a comparison that is neither TRUE nor FALSE, and the run
+## finishes with a plausible-looking table built on a threshold nobody set.
+check_count <- function(x, name) {
+  if (length(x) != 1L || !is.numeric(x) || is.na(x) ||
+      x != as.integer(x) || x < 1L) {
+    stopf("%s must be a single whole number of 1 or more, not %s.",
+          name, format_arg(x))
+  }
+  as.integer(x)
+}
+
+check_fraction <- function(x, name) {
+  if (length(x) != 1L || !is.numeric(x) || is.na(x) || x < 0 || x > 1) {
+    stopf("%s must be a single number between 0 and 1, not %s.",
+          name, format_arg(x))
+  }
+  as.numeric(x)
+}
+
+format_arg <- function(x) {
+  if (length(x) == 0L) return("nothing")
+  if (length(x) > 1L) return(sprintf("%d values", length(x)))
+  if (is.na(x)) return("NA")
+  paste(format(x), collapse = "")
+}

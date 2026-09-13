@@ -273,6 +273,9 @@ outcome_masks <- function(tag_length) {
 }
 
 onoff_reduction_mo <- function(onset, offset, base) {
+  ## No positive row means nothing to reduce. The tag length is read off the
+  ## first one, so this has to be caught before that.
+  if (length(onset) == 0L) return(list())
   tag_length <- length(onset[[1L]]$tag)
   masks <- outcome_masks(tag_length)
   acc <- list()
