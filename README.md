@@ -18,8 +18,9 @@ Lusine Mkrtchyan and Alrik Thiem. **It computes in plain R and requires no
 Python installation.**
 
 It is an independent implementation and is not endorsed by the authors of
-the original packages. Anything it gets wrong is the responsibility of this
-package, not of theirs.
+the original packages. Where it goes wrong, including where it departs from
+the Python implementation on purpose, the responsibility is this package's
+and not theirs.
 
 ## Installation
 
@@ -122,7 +123,9 @@ from the examples of the Python CORA package.
 
 The R results were checked configuration by configuration against the Python
 package on its own test and example data: truth tables, prime implicants,
-coverage sets and solution sets agree. Two differences are worth knowing:
+coverage sets and solution sets agree. Three differences are worth knowing,
+and each of them is this package's own judgement rather than the original
+authors':
 
 * **Solution order.** Solutions are returned in a deterministic order
   (shortest first, then lexicographic), so `M1` in R need not be `M1` in
@@ -133,7 +136,6 @@ coverage sets and solution sets agree. Two differences are worth knowing:
   implicant refers to, which makes its score disagree with the one the same
   prime implicant receives under `"ON-DC"`. This package uses the prime
   implicant's own outcomes in both algorithms, so the two agree.
-
 * **Tautologies in data mining.** A tuple of conditions whose only
   solution is the tautology `1` is reported by `cora_data_mining()` with
   zero solutions and zero scores. The Python implementation means to do
