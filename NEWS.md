@@ -41,10 +41,16 @@ changes is which input is refused, and how.
   Pruning is exact — a product never loses an implicant as multiplication
   continues — and `search = "exhaustive"` asks for the old route, which
   returns the same solutions and keeps each one's number in the unrestricted
-  set. `cora_irredundant_systems()` takes both arguments too.
+  set. `cora_irredundant_systems()` takes both arguments too. The Python
+  implementation documents the same parameter but every value, `0` included,
+  returns the full solution set: the bound is implemented correctly in its
+  `petric.py`, and was left behind on the public method when that method
+  moved to the native solver.
 * Literals inside a conjunction are written in alphabetical order of the
   condition instead of the order its column happens to sit in, so the same
   analysis prints the same string whichever way the data frame was assembled.
+  Ordinary collation is used rather than a byte order, which keeps names
+  outside ASCII working in any locale.
   This changes no result: of the 251 cross-validation fields, 225 are
   byte-identical and the other 26 differ only in that order.
 * `"ON-DC"` warns when a condition has more than twelve levels. Its cost

@@ -104,6 +104,16 @@ test_that("literals are written in alphabetical order of the condition", {
                  straight)
     expect_true(all(grepl("^#?A", straight[grepl("A\\{", straight)])))
   }
+
+  ## Sorting must not assume the names are ASCII. A byte-order sort refuses a
+  ## name outside it when the session locale is not UTF-8.
+  cjk <- stats::setNames(
+    data.frame(c(1, 0, 1, 0), c(1, 1, 0, 0), c(1, 1, 0, 1)),
+    c("\u689d\u4ef6\u4e59", "\u689d\u4ef6\u7532", "O"))
+  expect_silent(cora_prime_implicants(cora_context(cjk, "O")))
+  mixed <- data.frame(b = c(1, 0, 1, 0), A = c(1, 1, 0, 0), c = c(0, 1, 1, 0),
+                      B = c(1, 0, 0, 1), O = c(1, 1, 0, 1))
+  expect_silent(cora_prime_implicants(cora_context(mixed, "O")))
 })
 
 test_that("a condition with many levels warns before ON-DC is asked to run", {

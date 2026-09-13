@@ -284,14 +284,19 @@ set_to_str <- function(s, levels, label) {
 ## order the columns happen to sit in. Otherwise the same term prints as
 ## A{0}*C{1} or C{1}*A{0} depending on how the data frame was assembled, and
 ## two runs of the same analysis cannot be compared as text.
+##
+## The ordinary collation order is used rather than a byte order: it is what
+## readers expect of a condition named in their own language, and it never
+## fails on a name outside ASCII. What it costs is that two machines whose
+## locales collate differently can disagree about names differing only in
+## case or accent -- the terms are the same either way.
 minterm_to_str <- function(minterm, levels, labels) {
   parts <- vapply(seq_along(minterm), function(i) {
     set_to_str(minterm[[i]], levels[[i]], labels[[i]])
   }, character(1))
   keep <- nzchar(parts)
   if (!any(keep)) return("1")
-  parts <- parts[keep]
-  paste(parts[order(unlist(labels)[keep], method = "radix")], collapse = "*")
+  paste(parts[keep][order(unlist(labels)[keep])], collapse = "*")
 }
 
 ## Rows covered by exactly one prime implicant identify essential terms.

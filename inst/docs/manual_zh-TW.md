@@ -755,7 +755,7 @@ cora_irredundant_sums(ctx, max_depth = 7)   # 21 個解，0.2 秒
 - `"bounded"`（預設）：快，解從 1 開始編號
 - `"exhaustive"`：慢，但每個解**保留它在完整解集裡的編號**，所以可能回傳 `M2`、`M5`
 
-> Python 版的 `max_depth` **完全沒有作用**——它只出現在函數簽名和說明文件裡，函數本體從來沒有用到它。傳 0、1、2 都得到一樣的結果。見附錄 A.9。
+> Python 版的 `max_depth` 傳什麼值都**沒有作用**（傳 0 也一樣回傳全部的解）。但那不是因為沒實作——`cora/petric.py` 裡的純 Python 求解器**正確地實作了同一個剪枝設計**，只是公開介面改用 C++ 求解器之後沒有把這個參數接過去。詳見附錄 A.6b。
 
 ---
 
@@ -811,7 +811,7 @@ cora_irredundant_sums(ctx, max_depth = 7)   # 21 個解，0.2 秒
 3. **記號法**：本套件一律用 `X{v}`，Python 版對二元條件用大小寫。這**不改變任何計算結果**，只改變印出來的樣子——`#a + B` 在本套件是 `#A{0} + B{1}`。改的理由是大小寫的判斷依據（值集合含不含 0）在條件未從 0 編碼時完全失效，見 §7.4。`cora_logigram()` 的輸入仍接受大小寫寫法。
 4. **ON-OFF + 多結果時質蘊涵項的 inclusion 分數**：Python 版拿**全部**結果欄計算。該質蘊涵項物件自己的 `outputs` 欄位說它只對應某一個結果，`output_labels` 欄位卻列出全部——兩個欄位互相矛盾，而類別文件說兩者都是「corresponding to the implicant」。本套件用該質蘊涵項自己的結果欄。
 5. **資料探勘中的恆真式**：唯一解是 `1` 的組合在本套件記為 0 解 0 分。Python 版原意相同，但其檢查永遠不會觸發。
-6. **`max_depth` 真的會限制解**：本套件在 Petrick 法的乘法過程中就修剪，所以它同時是「限制」也是「讓算得完」的手段（見 §7.3.1）。Python 版的 `max_depth` 完全沒有作用。
+6. **`max_depth` 真的會限制解**：本套件在 Petrick 法的乘法過程中就修剪，所以它同時是「限制」也是「讓算得完」的手段（見 §7.3.1）。Python 版的 `max_depth` 傳什麼值都沒有作用——那個剪枝在 `cora/petric.py` 裡實作正確，只是沒有接到公開介面上（附錄 A.6b）。
 7. **字面的排列**：本套件把連言內部的字面依條件名稱**排序**後印出（`A{0}*C{1}`，不論欄位順序），Python 版依欄位順序印。這**不改變任何計算結果**，只讓同一份分析每次都印出同一個字串。
 
 這七處都是本套件自己的判斷，不是原作者的。**每一處的原始碼位置、可重現的例子與完整推導見附錄 A**；與 QCA、QCApro、cna 的設計比較見附錄 B。
@@ -1058,14 +1058,12 @@ cora_data_mining(df, "OUT", len_of_tuple = 1)
 
 這也是 `automatic = TRUE` 能正常運作的前提：它要「找到非零解才停」，而恆真式如果被當成滿分解，搜尋會在第一步就停下來。
 
-### A.6b 缺陷⑥　`max_depth` 從頭到尾沒有被使用
+### A.6b 缺陷⑥　`max_depth` 沒有接到公開介面上
 
 ```python
 # cora/prime_implicants.py:1025
 def get_irredundant_sums(self, max_depth=None):
     """
-    Parameters
-    ----------
     max_depth : int
                A positive integer denoting max number of prime implicants
                in the solution.
@@ -1074,9 +1072,7 @@ def get_irredundant_sums(self, max_depth=None):
     """
 ```
 
-說明文件寫得很清楚：「解中質蘊涵項數量的上限」。但 `max_depth` 這個名字在整個檔案裡**只出現三次**——第 1025 行的簽名、第 1030 和 1037 行的說明文件。**函數本體從來沒有用到它。**
-
-實測：
+說明文件寫得很清楚：「解中質蘊涵項數量的上限」。實測卻是：
 
 ```python
 for md in (None, 1, 2, 0):
@@ -1087,7 +1083,38 @@ for md in (None, 1, 2, 0):
 
 連 `max_depth = 0` 都照樣回傳全部的解。
 
-本套件的 `max_depth` 是在 Petrick 法的乘法過程中就修剪，見 §7.3.1。
+**但這不是「沒有實作」——實作是存在的，而且做得正確。**`cora/petric.py` 裡的純 Python 求解器完整實作了這個上限：
+
+```python
+# cora/petric.py:21-42
+def _find_irredundant_sums(implicants_with_coverage, coverage, max_depth=None):
+    if max_depth is None:
+        max_depth = len(implicants_with_coverage)
+    ...
+
+def _find_irrendundant_sums_internal(..., max_depth):
+    # If we reached maximal depth / maximal length of the sum, do not continue.
+    if len(partial_solution) > max_depth:
+        return
+```
+
+**這正是「在搜尋時就剪枝」**，跟本套件的做法是同一個設計。它也被 `cora/__init__.py` 匯出，而且套件自己的測試 `tests/test_petric.py` 有在用它。
+
+問題出在接線：`get_irredundant_sums` 呼叫的是**原生（C++）求解器**：
+
+```python
+# cora/prime_implicants.py:1067
+result = _find_irredundant_sums_native(
+    ([(i, i.coverage) for i in prime_implicants]), self.cares
+)
+
+# cora/petric.py:6 —— 只收兩個參數，沒有 max_depth 這個位置
+def _find_irredundant_sums_native(implicants_with_coverage, coverage):
+```
+
+原生求解器的簽名裡**沒有** `max_depth`，呼叫端也沒有傳。所以當這個套件改用 C++ 求解器加速之後，`max_depth` 這個參數就從公開介面上**斷線**了——說明文件還在，行為沒了。
+
+> **這條的性質跟前五條不同。**前五條是邏輯或語意的錯誤，這一條是「加速時漏接了一個參數」。原作者本來就知道該怎麼做，而且做對了——只是那份正確的實作現在走不到。本套件的 `max_depth` 等於是把那條路重新接起來（見 §7.3.1）。
 
 ### A.7 修正之後
 

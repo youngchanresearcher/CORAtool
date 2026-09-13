@@ -172,6 +172,30 @@ order literals are written inside a conjunction, none differing in content.**
 
 `get_irredundant_sums(self, max_depth=None)` documents `max_depth` as "a
 positive integer denoting max number of prime implicants in the solution".
-The name appears three times in `cora/prime_implicants.py` — the signature at
-line 1025 and the docstring at lines 1030 and 1037 — and **never in the body
-of the function**. Every value, `0` included, returns the full solution set.
+Every value, `0` included, returns the full solution set.
+
+The bound is not missing from the codebase, though. `cora/petric.py:21`
+implements it, and correctly — as a search bound, the same design this
+package uses:
+
+```python
+def _find_irredundant_sums(implicants_with_coverage, coverage, max_depth=None):
+    if max_depth is None:
+        max_depth = len(implicants_with_coverage)
+    ...
+    # If we reached maximal depth / maximal length of the sum, do not continue.
+    if len(partial_solution) > max_depth:
+        return
+```
+
+It is exported from `cora/__init__.py` and exercised by the package's own
+`tests/test_petric.py`. What happened is a wiring break:
+`get_irredundant_sums` calls the native C++ solver instead
+(`prime_implicants.py:1067`), and that entry point takes two arguments with
+no place for a bound (`petric.py:6`). When the faster solver was adopted the
+parameter was left behind on the public method, documentation and all.
+
+So this one is unlike the other five. Those are errors of logic or meaning;
+this is a parameter dropped during an optimisation. The original authors knew
+what the bound should do and implemented it correctly — that implementation
+is simply unreachable from the documented method.
