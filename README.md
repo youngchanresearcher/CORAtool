@@ -160,6 +160,24 @@ file.show(system.file("docs", "manual_zh-TW.md", package = "CORA"))
 `inst/examples/getting-started.R` is a runnable script over the same
 material.
 
+## Checking a build
+
+`tools/acceptance.R` exercises every exported function against an installed
+copy, confirms the behaviours this version introduces, and checks that the
+inputs which should be refused are refused:
+
+```sh
+Rscript tools/acceptance.R
+```
+
+`tools/check.R` builds the tarball and runs `R CMD check --as-cran` over it,
+then prints only the checks that did not return OK and says which of those
+come from the machine rather than from the package:
+
+```sh
+Rscript tools/check.R
+```
+
 ## Bundled data
 
 `swiss_minaret`, `gross_carvin`, `mccluskey` and `bergschlosser`, all taken
