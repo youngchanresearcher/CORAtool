@@ -142,13 +142,15 @@ nothing else in the package does.
 
 ## Citation
 
-When you use this package, cite the method and the original implementation:
+Cite this package and the method it implements. `citation("CORA")` prints
+both entries:
+
+> Chan, Y. (2026). *CORA: Combinational Regularity Analysis*. R package
+> version 0.1.0.
 
 > Thiem, A., Mkrtchyan, L., & Sebechlebská, Z. (2023). Combinational
 > Regularity Analysis (CORA) - a new method for uncovering complex causation
 > in medical and health research. *BMC Medical Research Methodology*, 23, 279.
-
-`citation("CORA")` prints the full entry.
 
 ## License
 
