@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Combinational Regularity Analysis with CORA</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Combinational Regularity Analysis with
+CORA</h1>
+
+
+
+<div id="the-question-this-method-asks" class="section level2">
+<h2>The question this method asks</h2>
+<p>Most quantitative methods ask how much each variable contributes on
+average. Combinational Regularity Analysis asks a different question:
+which <em>combinations</em> of conditions are regularly followed by the
+outcome, allowing that several different combinations may each be enough
+on their own.</p>
+<p>Structures of that shape are called INUS structures: a condition that
+is <strong>I</strong>nsufficient on its own but a
+<strong>N</strong>ecessary part of a combination that is itself
+<strong>U</strong>nnecessary but <strong>S</strong>ufficient. Written
+out:</p>
+<pre><code>A{1}*B{0}*C{1} + D{1}*E{1}  =&gt;  Y</code></pre>
+<p>Either “A is 1 and B is 0 and C is 1”, or “D is 1 and E is 1”, is
+enough for <code>Y</code>. Neither is required. Asking what “the effect
+of A” is has no answer here, because A only does anything alongside B
+and C.</p>
+<p>CORA belongs to the family of configurational comparative methods,
+alongside QCA and CNA. What distinguishes it is its starting point —
+switching circuit analysis — and two capabilities that follow from it:
+multi-value conditions, and <em>complex effects</em>, where several
+outcome columns are minimised jointly rather than one at a time.</p>
+</div>
+<div id="the-data" class="section level2">
+<h2>The data</h2>
+<p>A data frame, one row per case. Conditions must be non-negative
+integers <strong>coded from zero upwards with no gaps</strong>:
+<code>0, 1</code> for a binary condition, <code>0, 1, 2</code> for a
+three-valued one. <code>cora_recode()</code> will do that for you, and
+an analysis of data coded otherwise is refused rather than attempted —
+see <em>Coding</em> below for why that matters.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">A   =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                 <span class="at">B   =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>                 <span class="at">C   =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>                 <span class="at">OUT =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>ctx <span class="ot">&lt;-</span> <span class="fu">cora_context</span>(df, <span class="at">output_labels =</span> <span class="st">&quot;OUT&quot;</span>)</span></code></pre></div>
+<p><code>cora_context()</code> holds the data together with every
+analytical choice. It computes nothing on its own: the truth table, the
+prime implicants and the solutions are each derived on first request and
+kept afterwards.</p>
+</div>
+<div id="five-stages" class="section level2">
+<h2>Five stages</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">cora_truth_table</span>(ctx)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt;   A B C OUT</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; 1 0 0 1   1</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; 2 0 1 0   1</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; 3 1 0 1   0</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; 4 1 1 0   1</span></span></code></pre></div>
+<p>Cases sharing a combination of condition values are aggregated into
+one configuration. <code>n_cut</code> sets how many cases a
+configuration needs before it is believed, and <code>inc_score1</code>
+how consistently it must show the outcome to count as positive.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">cora_prime_implicants</span>(ctx)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; #A{0}, C{0}, B{1}</span></span></code></pre></div>
+<p>Boolean minimisation reduces the positive configurations to prime
+implicants — combinations that cannot be shortened without covering a
+negative case. A <code>#</code> marks an <strong>essential</strong>
+prime implicant: one that holds a positive case no other prime implicant
+reaches, so every solution must contain it.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">cora_pi_chart</span>(ctx)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt;       0 1 3</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; #A{0} 1 1 0</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; C{0}  0 1 1</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; B{1}  0 1 1</span></span></code></pre></div>
+<p>The chart says which prime implicant covers which positive row.
+Petrick’s method then reads every irredundant solution off it — every
+combination that covers all positive rows and stops covering them all if
+any term is removed.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">cora_irredundant_sums</span>(ctx)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; M1: #A{0} + C{0}</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; M2: #A{0} + B{1}</span></span></code></pre></div>
+</div>
+<div id="reading-the-result" class="section level2">
+<h2>Reading the result</h2>
+<p>Two solutions, not one. This is <strong>model ambiguity</strong>, and
+it is a property of the data rather than a failure of the analysis: on
+every configuration that was actually observed, these two make identical
+predictions. They differ only on configurations nobody observed.</p>
+<p>The honest response is to report both. Narrowing to one requires an
+argument from outside the data — theory, timing, a design that rules a
+combination out — because the data has already been used up.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">cora_pi_details</span>(ctx)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt;      PI Cov.r Inc.   M1   M2</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; 1 #A{0}  0.67    1 0.33 0.33</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; 2  C{0}  0.67    1 0.33   NA</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; 3  B{1}  0.67    1   NA 0.33</span></span></code></pre></div>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>column</th>
+<th>meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Cov.r</code></td>
+<td>of all cases showing the outcome, the share this prime implicant
+covers</td>
+</tr>
+<tr class="even">
+<td><code>Inc.</code></td>
+<td>of the cases this prime implicant covers, the share showing the
+outcome</td>
+</tr>
+<tr class="odd">
+<td><code>M1</code>, <code>M2</code></td>
+<td>within that solution, the share of positive cases
+<strong>only</strong> this term covers</td>
+</tr>
+<tr class="even">
+<td><code>NA</code></td>
+<td>this prime implicant is not in that solution</td>
+</tr>
+</tbody>
+</table>
+<p>High inclusion means the combination is close to sufficient: when it
+holds, the outcome nearly always follows. High coverage means it
+explains much of what happened. They answer different questions, and a
+term with inclusion 1 and coverage 0.05 is telling you it never misfires
+and almost never fires.</p>
+<p>A unique coverage of 0 is worth pausing on: that term covers nothing
+the others do not already cover. It is in the solution because removing
+it would break irredundance, not because it carries any case of its
+own.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">cora_system_details</span>(ctx)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt;                  Cov. Inc.</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt; Solution details    1    1</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="fu">cora_describe</span>(<span class="fu">cora_irredundant_sums</span>(ctx)[[<span class="dv">1</span>]])</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; [1] &quot;#A{0} + C{0} &lt;=&gt; OUT&quot;</span></span></code></pre></div>
+<p><code>cora_describe()</code> turns the scores into a relation:
+<code>=&gt;</code> for sufficient, <code>&lt;=</code> for necessary,
+<code>&lt;=&gt;</code> for both.</p>
+</div>
+<div id="multi-value-conditions" class="section level2">
+<h2>Multi-value conditions</h2>
+<p>Nothing changes except the range of the values.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>tort <span class="ot">&lt;-</span> <span class="fu">cora_context</span>(gross_carvin, <span class="st">&quot;TORT&quot;</span>, <span class="at">case_col =</span> <span class="st">&quot;Case&quot;</span>,</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>                     <span class="at">algorithm =</span> <span class="st">&quot;ON-OFF&quot;</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="fu">cora_irredundant_sums</span>(tort)</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; M1: #LENG{2}*RISK{1} + #DOSI{1} + PRIC{0}</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; M2: #LENG{2}*RISK{1} + #DOSI{1} + FRFL{0}*MIMA{0}</span></span></code></pre></div>
+<p>Every literal carries its value explicitly, binary conditions
+included: <code>LENG{2}</code> is “LENG equals 2”, <code>PRIC{0}</code>
+is “PRIC equals 0”. Literals inside a conjunction are written in
+alphabetical order of the condition, so the same analysis prints the
+same string however the columns were arranged.</p>
+</div>
+<div id="complex-effects" class="section level2">
+<h2>Complex effects</h2>
+<p>Several outcomes can be minimised jointly. The result is an
+irredundant <em>system</em>: one function per outcome, irredundant as a
+whole even where an individual function is not.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>minaret <span class="ot">&lt;-</span> <span class="fu">cora_context</span>(swiss_minaret, <span class="fu">c</span>(<span class="st">&quot;X&quot;</span>, <span class="st">&quot;M&quot;</span>), <span class="at">algorithm =</span> <span class="st">&quot;ON-OFF&quot;</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">cora_irredundant_systems</span>(minaret)[[<span class="dv">1</span>]]</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; ---- System 1 ----</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; X: L{0}*T{0} + S{1}</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; M: L{0}*T{0} + S{1} + T{1}</span></span></code></pre></div>
+<p><code>L{0}*T{0}</code> and <code>S{1}</code> serve both outcomes;
+<code>T{1}</code> serves only <code>M</code>. Which mechanisms are
+shared and which are particular to one outcome is the question complex
+effects exist to answer, and analysing each outcome separately cannot
+reach it.</p>
+</div>
+<div id="diagrams" class="section level2">
+<h2>Diagrams</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">cora_logigram</span>(<span class="fu">cora_irredundant_sums</span>(tort)[[<span class="dv">1</span>]])</span></code></pre></div>
+<p><img src="data:image/png;base64,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oblz56beAiQg8BBNoTC5dt3GT/d9MzIyMm/evNRzgDS8ZAehnBw/s6RzzQ/jl8fGxtQdKpnAQxCFwmRffnvH/Y8//MhjAwMDTU1NqRcBKblFDzNesVgc+Gj/Cy/m72xpHR4+2N7ennoRkJ7Awwx2/vzFbf0f5zfvbLzt9pdf2bhixYrUi4DpQuBhhrlypfDtd98fOPjV4J5Dn31+pLu7+623Ny9dujT1LmB6EXgq19p1G+vr61KvuFGXLv12/pcLp079PH7q7IIF9yxatKhnzbodOx/M5XKppwHTkcBTobZs2TIxMZF6xU3I5XLNzc2tra3z589vaGhIPQeY7gSeCrVy5crUEwCmkK/JAUBAAg8AAQk8AAQk8AAQkMADQEACDwABCTwABCTwABCQwANAQAIPAAEJPAAEJPAAEJDAA0BAAg8AAQk8AAQk8AAQkMADQEACDwAB1aQecBNmzZrV1NRU5otms9mWlpYyXzSTyTQ3Nzc2Npb5orlcrlAolPmiAEyFqlKplHoDAPA/c4seAAISeAAISOABICCBB4CABB4AAhJ4AAhI4AEgIIEHgIAEHgACEngACEjgASAggQeAgAQeAAISeAAISOABICCBB4CABB4AAhJ4AAhI4AEgIIEHgIAEHgACEngACEjgASAggQeAgAQeAAISeAAISOABICCBB4CABB4AAhJ4AAhI4AEgIIEHgIAEHgACEngACEjgASAggQeAgAQeAAISeAAISOABICCBB4CABB4AAhJ4AAhI4AEgIIEHgIAEHgACEngACEjgASAggQeAgAQeAAISeAAISOABICCBB4CA/gQIHI7u4iT+KgAAAABJRU5ErkJggg==" alt="Two-level logic diagram of the tort liability solution" /></p>
+<p>Read it left to right. The vertical lines are condition buses, one
+per condition that appears in the solution. A dot on a bus is a literal,
+labelled with the value it takes. The yellow blocks are AND gates
+forming the conjunctions; a term of a single literal has nothing to
+combine and runs straight past them. The blue shield is the OR gate, and
+the name on its right is the outcome.</p>
+<p>The expression and its scores are printed above the drawing, so the
+figure and the formula travel together. <code>show_terms = TRUE</code>
+labels each gate with the conjunction it forms; <code>title</code> and
+<code>subtitle</code> take your own text, or <code>NA</code> for
+none.</p>
+</div>
+<div id="choosing-the-algorithm" class="section level2">
+<h2>Choosing the algorithm</h2>
+<p><code>&quot;ON-DC&quot;</code> is the classical Quine-McCluskey algorithm over
+positive and don’t-care terms; <code>&quot;ON-OFF&quot;</code> is McCluskey’s
+modified algorithm over positive and negative terms. On data coded from
+zero they return the same prime implicants.</p>
+<p>They do not cost the same. <code>&quot;ON-DC&quot;</code> expands the full
+configuration space, so its cost grows exponentially in the number of
+levels of a single condition: roughly a second at twelve levels, half a
+minute at eighteen, out of reach at thirty. <code>&quot;ON-OFF&quot;</code> works
+from the observed rows and answers in a fraction of a second at any
+size. <strong>Prefer <code>&quot;ON-OFF&quot;</code> when a condition has many
+levels or there are many conditions.</strong> A condition of more than
+twelve levels draws a warning saying so.</p>
+</div>
+<div id="coding" class="section level2">
+<h2>Coding</h2>
+<p>Conditions must run <code>0, 1, 2, ...</code> because the algorithms
+take the number of distinct values as the range of values. A condition
+coded <code>{1, 2}</code> has two distinct values, so an implicant that
+does not mention it is filled in with <code>{0, 1}</code> — a set
+containing a value never observed and missing one that was. Cases are
+then dropped from coverage for no reason connected to the implicant.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>gapped <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">A =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="at">B =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>                     <span class="at">OUT =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="fu">cora_prime_implicants</span>(<span class="fu">cora_context</span>(gapped, <span class="st">&quot;OUT&quot;</span>))</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#&gt; Error: Condition(s) &#39;B&#39; are not coded from 0 upwards. CORA expects each condition to take the values 0, 1, 2, ... with no gaps.</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co">#&gt;   Recode them with:  data &lt;- cora_recode(data, c(&quot;B&quot;))</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co">#&gt;   cora_recode() maps each condition onto 0, 1, 2, ... keeping the order of its values.</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>fixed <span class="ot">&lt;-</span> <span class="fu">cora_recode</span>(gapped, <span class="st">&quot;B&quot;</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>fixed</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co">#&gt;   A B OUT</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co">#&gt; 1 1 1   1</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co">#&gt; 2 1 0   1</span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co">#&gt; 3 0 1   0</span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co">#&gt; 4 0 1   1</span></span></code></pre></div>
+<p>Recoding shifts the labels: <code>B{2}</code> becomes
+<code>B{1}</code>. The structure is unchanged, but a value in a write-up
+has to be read against the coding that produced it.</p>
+</div>
+<div id="when-there-are-too-many-solutions" class="section level2">
+<h2>When there are too many solutions</h2>
+<p>A chart with a few dozen prime implicants can have tens of thousands
+of irredundant solutions. Every one is valid, which is exactly the
+problem: nobody can report them all. It usually means too many
+conditions or too loose a threshold.</p>
+<p><code>max_depth</code> asks a narrower question, and asks it of the
+search rather than of the finished list, which is often the difference
+between an answer and no answer:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>praet <span class="ot">&lt;-</span> <span class="fu">cora_context</span>(bergschlosser, <span class="st">&quot;PRAET&quot;</span>,</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>                      <span class="at">input_labels =</span> <span class="fu">c</span>(<span class="st">&quot;AGRPOP&quot;</span>, <span class="st">&quot;PARCL&quot;</span>, <span class="st">&quot;APROG&quot;</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>                                       <span class="st">&quot;PS&quot;</span>, <span class="st">&quot;RQ&quot;</span>, <span class="st">&quot;LRC&quot;</span>),</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>                      <span class="at">case_col =</span> <span class="st">&quot;Case&quot;</span>, <span class="at">inc_score1 =</span> <span class="fl">0.6</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>                      <span class="at">algorithm =</span> <span class="st">&quot;ON-OFF&quot;</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">cora_irredundant_sums</span>(praet, <span class="at">max_depth =</span> <span class="dv">7</span>))</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co">#&gt; [1] 21</span></span></code></pre></div>
+<p>Unrestricted, that analysis has 74,524 solutions and takes about half
+a minute; restricted to seven prime implicants it answers in a fraction
+of a second. The restriction applies to the call, not to the context, so
+a later unrestricted call still sees everything.</p>
+</div>
+<div id="searching-for-a-smaller-model" class="section level2">
+<h2>Searching for a smaller model</h2>
+<p><code>cora_data_mining()</code> runs the analysis over every
+combination of a given number of conditions, which is a configurational
+Occam’s razor: how few conditions still generate a solution?</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">cora_data_mining</span>(mccluskey, <span class="fu">c</span>(<span class="st">&quot;F1&quot;</span>, <span class="st">&quot;F2&quot;</span>), <span class="at">len_of_tuple =</span> <span class="dv">2</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="co">#&gt;   Combination Nr_of_systems Inc_score Cov_score Score</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="co">#&gt; 1        A, B             1         1     0.333 0.333</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co">#&gt; 2        A, C             1         1     0.667 0.667</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co">#&gt; 3        A, D             1         1     0.333 0.333</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co">#&gt; 4        B, C             1         1     0.667 0.667</span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt; 5        B, D             1         1     0.333 0.333</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt; 6        C, D             1         1     0.667 0.667</span></span></code></pre></div>
+<p><code>automatic = TRUE</code> widens the search one condition at a
+time until a combination yields a solution.</p>
+</div>
+<div id="relation-to-the-python-implementation" class="section level2">
+<h2>Relation to the Python implementation</h2>
+<p>This package is an R port of the Python packages CORA and LOGIGRAM.
+It computes in plain R and needs no Python installation. Prime
+implicants, coverage sets and solution sets agree with the original
+across its own test data and 200 randomly generated data sets.</p>
+<p>It departs from the original in seven documented places. The
+departures that change numbers are: data not coded from zero is refused
+rather than analysed; an implicant’s inclusion score is measured against
+the outcome it is an implicant of, so the two algorithms agree; and a
+tuple whose only solution is the tautology scores zero in data mining
+rather than a perfect one. Each is recorded with its source location and
+a reproducible example in the extended manual,</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">file.show</span>(<span class="fu">system.file</span>(<span class="st">&quot;docs&quot;</span>, <span class="st">&quot;manual_zh-TW.md&quot;</span>, <span class="at">package =</span> <span class="st">&quot;CORA&quot;</span>))</span></code></pre></div>
+<p>and the evidence behind the comparison is in
+<code>tools/VALIDATION.md</code> in the source repository.</p>
+<p>If the Python package is installed,
+<code>cora_compare_python()</code> will run both and compare them.</p>
+</div>
+<div id="caveats-worth-carrying" class="section level2">
+<h2>Caveats worth carrying</h2>
+<ul>
+<li>CORA finds <strong>regularity structure in data</strong>. Moving
+from there to a causal claim needs what the method cannot supply:
+theory, timing, a design that rules out common causes.</li>
+<li>Limited diversity is the normal condition, not an edge case. With
+<code>k</code> conditions there are at least <code>2^k</code> possible
+configurations and you will have observed a small fraction. How much of
+a solution rests on configurations nobody saw is yours to know and to
+say.</li>
+<li>Coverage and inclusion are not p-values. There is no null hypothesis
+here and no significance to report.</li>
+<li>Report every solution, the algorithm, the thresholds, and what the
+values of each condition mean. Without the last of these a reader cannot
+tell what <code>LENG{2}</code> is a claim about.</li>
+</ul>
+</div>
+<div id="extended-manual" class="section level2">
+<h2>Extended manual</h2>
+<p><code>inst/docs/manual_zh-TW.md</code> is a fuller manual in
+Traditional Chinese, covering the theory, the output, the diagrams and
+the comparison with the Python implementation, QCA, QCApro and cna in
+more depth than this vignette.
+<code>inst/examples/getting-started.R</code> is the same ground as a
+runnable script.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

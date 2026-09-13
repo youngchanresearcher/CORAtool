@@ -138,20 +138,10 @@ implementation can be drawn as they are.
 
 ## Documentation
 
-```r
-vignette("cora", package = "CORA")
-```
-
-walks through an analysis end to end in English: what the method looks for,
-the five stages, how to read coverage and inclusion, multi-value conditions
-and complex effects, the diagrams, choosing between the algorithms, and what
-to do when there are more solutions than anyone can report.
-
-`inst/docs/manual_zh-TW.md` is a fuller manual in Traditional Chinese,
-covering the same ground in more depth plus the comparison with the Python
-implementation, QCA, QCApro and cna, with source locations for every claim.
-`inst/examples/getting-started.R` is a runnable script over the same
-material.
+`inst/docs/manual_zh-TW.md` is a full manual in Traditional Chinese: the
+theory behind the method, what goes in and what comes out, how to read the
+notation and the scores, and the parameter choices that matter.
+`inst/examples/getting-started.R` is the same ground as runnable code.
 
 ## Bundled data
 

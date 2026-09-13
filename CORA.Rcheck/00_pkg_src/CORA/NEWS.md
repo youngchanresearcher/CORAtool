@@ -70,13 +70,6 @@ changes is which input is refused, and how.
 * Outcomes declared inconsistently — one with values in curly brackets, one
   without — now say so instead of reporting the declaration as a column name
   missing from the data.
-* A vignette, `vignette("cora")`, walks through an analysis in English: what
-  the method looks for, the five stages, reading the scores, multi-value
-  conditions, complex effects, diagrams, choosing an algorithm, the zero-based
-  coding requirement, and what to do when there are more solutions than can be
-  reported. The Traditional Chinese manual remains the fuller reference.
-* `citation("CORA")` reports the installed version rather than a version
-  string fixed when the file was written.
 * New property tests check what must hold of any correct output — coverage,
   irredundance, primality, essentiality, score ranges, and agreement between
   the two algorithms — over randomly generated data, without needing the
