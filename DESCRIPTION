@@ -6,7 +6,7 @@ Authors@R: c(
     person("Young", "Chan", email = "youngchanresearcher@gmail.com",
            role = c("aut", "cre", "cph"),
            comment = "Author of the R implementation"),
-    person("Zuzana", "Sebechlebska", role = c("aut", "cph"),
+    person("Zuzana", "Sebechlebská", role = c("aut", "cph"),
            comment = "Author of the original Python implementation"),
     person("Lusine", "Mkrtchyan", role = c("aut", "cph"),
            comment = "Author of the original Python implementation"),
@@ -24,7 +24,7 @@ Description: Combinational Regularity Analysis (CORA) searches data for INUS
     effects are supported, together with a configurational data-mining search
     and two-level logic diagrams. The package is an R port of the 'Python'
     packages 'CORA' and 'LOGIGRAM' described in Thiem, Mkrtchyan and
-    Sebechlebska (2023) <doi:10.1186/s12874-023-02120-2>; it computes in
+    Sebechlebská (2023) <doi:10.1186/s12874-023-02120-2>; it computes in
     plain R and requires no 'Python' installation.
 License: GPL (>= 3)
 Encoding: UTF-8

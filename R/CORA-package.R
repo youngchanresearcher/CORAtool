@@ -8,7 +8,7 @@
 #' related methods, structures with simple as well as complex effects.
 #'
 #' The package is a port of the Python packages `CORA` and `LOGIGRAM` by
-#' Sebechlebska, Mkrtchyan and Thiem. It computes in plain R and needs no
+#' Sebechlebská, Mkrtchyan and Thiem. It computes in plain R and needs no
 #' Python installation; [cora_python_available()] and the functions around it
 #' exist only to cross-check results against the original implementation.
 #'
@@ -22,12 +22,12 @@
 #' logic diagram.
 #'
 #' @references
-#' Thiem, A., Mkrtchyan, L., and Sebechlebska, Z. (2023). Combinational
+#' Thiem, A., Mkrtchyan, L., and Sebechlebská, Z. (2023). Combinational
 #' Regularity Analysis (CORA) - a new method for uncovering complex causation
 #' in medical and health research. *BMC Medical Research Methodology*, 23, 279.
 #' \doi{10.1186/s12874-023-02120-2}
 #'
-#' Sebechlebska, Z., Mkrtchyan, L., and Thiem, A. (2023). CORA: A Python
+#' Sebechlebská, Z., Mkrtchyan, L., and Thiem, A. (2023). CORA: A Python
 #' package for Combinational Regularity Analysis.
 #'
 #' @keywords internal

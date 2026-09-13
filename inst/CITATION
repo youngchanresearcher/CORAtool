@@ -7,7 +7,7 @@ bibentry(
                   "research"),
   author  = c(person("Alrik", "Thiem"),
               person("Lusine", "Mkrtchyan"),
-              person("Zuzana", "Sebechlebska")),
+              person("Zuzana", "Sebechlebská")),
   journal = "BMC Medical Research Methodology",
   year    = "2023",
   volume  = "23",

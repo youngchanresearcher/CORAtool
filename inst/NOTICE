@@ -7,7 +7,7 @@ packages CORA and LOGIGRAM:
   CORA      https://github.com/PoliUniLu/cora
   LOGIGRAM  https://github.com/PoliUniLu/logigram
 
-  Copyright (C) Zuzana Sebechlebska, Lusine Mkrtchyan and Alrik Thiem
+  Copyright (C) Zuzana Sebechlebská, Lusine Mkrtchyan and Alrik Thiem
   Licensed under the GNU General Public License v3.0 or later.
 
 The Petrick solver follows the reference implementation in
