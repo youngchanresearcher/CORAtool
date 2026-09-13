@@ -297,14 +297,29 @@ draw_logigram <- function(parsed, color_or = "lightblue",
     rows <- which(vapply(implicants, function(i) k %in% i$outputs, logical(1)))
     if (length(rows) == 0L) mean(row_y) else mean(row_y[rows])
   }, numeric(1))
-  ## Keep OR gates from overlapping when several outputs share rows.
+  ## Stack the OR gates in the order the outputs were given, first on top,
+  ## so the diagram reads like the solution it was built from.
   if (no > 1L) {
-    ord <- order(or_y)
-    for (idx in seq_along(ord)[-1L]) {
-      a <- ord[[idx - 1L]]
-      b <- ord[[idx]]
-      min_gap <- (or_h[[a]] + or_h[[b]]) / 2 + 0.4
-      if (or_y[[b]] - or_y[[a]] < min_gap) or_y[[b]] <- or_y[[a]] + min_gap
+    stacked <- numeric(no)
+    stacked[[1L]] <- or_y[[1L]]
+    for (k in seq_len(no)[-1L]) {
+      min_gap <- (or_h[[k - 1L]] + or_h[[k]]) / 2 + 0.4
+      stacked[[k]] <- min(or_y[[k]], stacked[[k - 1L]] - min_gap)
+    }
+    or_y <- stacked + (mean(or_y) - mean(stacked))
+  }
+
+  ## An OR gate sitting at the height of an implicant row would put its input
+  ## line on top of that row's output line, which reads as a connection that
+  ## is not there. Shift the whole stack by the smallest offset that avoids it.
+  collides <- function(shift) {
+    any(vapply(or_y + shift,
+               function(y) any(abs(row_y - y) < 0.2), logical(1)))
+  }
+  for (shift in c(0, 0.5, -0.5, 1, -1) * lit_gap) {
+    if (!collides(shift)) {
+      or_y <- or_y + shift
+      break
     }
   }
 
