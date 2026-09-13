@@ -7,12 +7,12 @@
 cora_prime_implicants(ctx)
 }
 \arguments{
-\item{ctx}{A [cora_context()].}
+\item{ctx}{A \code{\link[=cora_context]{cora_context()}}.}
 }
 \value{
-A list of prime implicants, of class `cora_implicants`. Every
-  literal is printed as `CONDITION{value}`, a term joins its literals with
-  `*`, and an essential prime implicant is prefixed with `#`.
+A list of prime implicants, of class \code{cora_implicants}. Every
+literal is printed as \verb{CONDITION\{value\}}, a term joins its literals with
+\code{*}, and an essential prime implicant is prefixed with \verb{#}.
 }
 \description{
 Minimises the truth table with the algorithm chosen in the context and

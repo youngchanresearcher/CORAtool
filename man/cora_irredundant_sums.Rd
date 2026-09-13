@@ -11,23 +11,23 @@ cora_irredundant_sums(
 )
 }
 \arguments{
-\item{ctx}{A [cora_context()] with exactly one outcome.}
+\item{ctx}{A \code{\link[=cora_context]{cora_context()}} with exactly one outcome.}
 
 \item{max_depth}{Optional upper bound on the number of prime implicants a
 solution may contain. The restriction applies to the call, never to the
 context: the next call without it still sees every solution.}
 
-\item{search}{How `max_depth` is applied. `"bounded"`, the default, stops
+\item{search}{How \code{max_depth} is applied. \code{"bounded"}, the default, stops
 Petrick's method from building solutions longer than the bound in the
 first place, which is often the difference between an answer and no
 answer at all; solutions are numbered from 1 within the restricted set.
-`"exhaustive"` solves the chart in full and then filters, so each
+\code{"exhaustive"} solves the chart in full and then filters, so each
 solution keeps the number it has in the unrestricted set and a
-restricted call can return `M2` and `M5`. Both return the same
-solutions. Ignored when `max_depth` is not given.}
+restricted call can return \code{M2} and \code{M5}. Both return the same
+solutions. Ignored when \code{max_depth} is not given.}
 }
 \value{
-A list of solutions, of class `cora_systems`.
+A list of solutions, of class \code{cora_systems}.
 }
 \description{
 Solves the prime implicant chart with Petrick's method and returns every
@@ -35,10 +35,10 @@ irredundant sum of prime implicants.
 }
 \note{
 The number of irredundant sums can grow exponentially with the size
-  of the prime implicant chart. A chart of a few dozen prime implicants can
-  have tens of thousands of solutions, which is a sign that the analysis
-  has too many conditions or too loose a threshold rather than a result to
-  report; `max_depth` is the way to ask a narrower question.
+of the prime implicant chart. A chart of a few dozen prime implicants can
+have tens of thousands of solutions, which is a sign that the analysis
+has too many conditions or too loose a threshold rather than a result to
+report; \code{max_depth} is the way to ask a narrower question.
 }
 \examples{
 df <- data.frame(A = c(1, 0, 1, 0), B = c(1, 0, 0, 1),

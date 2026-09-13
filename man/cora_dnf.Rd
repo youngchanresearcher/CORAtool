@@ -7,8 +7,8 @@
 cora_dnf(x, ...)
 }
 \arguments{
-\item{x}{A solution from [cora_irredundant_sums()] or
-[cora_irredundant_systems()].}
+\item{x}{A solution from \code{\link[=cora_irredundant_sums]{cora_irredundant_sums()}} or
+\code{\link[=cora_irredundant_systems]{cora_irredundant_systems()}}.}
 
 \item{...}{Unused.}
 }
@@ -16,7 +16,7 @@ cora_dnf(x, ...)
 A character vector with one entry per outcome.
 }
 \description{
-Renders a solution in the `"A*B+c<=>F"` notation that [cora_logigram()]
+Renders a solution in the \code{"A*B+c<=>F"} notation that \code{\link[=cora_logigram]{cora_logigram()}}
 draws.
 }
 \examples{

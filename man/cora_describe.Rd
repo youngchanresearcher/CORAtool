@@ -7,8 +7,8 @@
 cora_describe(x, cov = 1, ...)
 }
 \arguments{
-\item{x}{A solution from [cora_irredundant_sums()] or
-[cora_irredundant_systems()].}
+\item{x}{A solution from \code{\link[=cora_irredundant_sums]{cora_irredundant_sums()}} or
+\code{\link[=cora_irredundant_systems]{cora_irredundant_systems()}}.}
 
 \item{cov}{Minimum coverage score for the relation to be read as
 necessary as well as sufficient.}

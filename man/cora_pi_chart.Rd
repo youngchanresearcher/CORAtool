@@ -7,12 +7,12 @@
 cora_pi_chart(ctx)
 }
 \arguments{
-\item{ctx}{A [cora_context()].}
+\item{ctx}{A \code{\link[=cora_context]{cora_context()}}.}
 }
 \value{
 A data frame with one row per prime implicant and one column per
-  covered truth table row; an entry is 1 when the prime implicant covers
-  that row and 0 otherwise.
+covered truth table row; an entry is 1 when the prime implicant covers
+that row and 0 otherwise.
 }
 \description{
 Prime implicant chart

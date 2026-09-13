@@ -5,12 +5,12 @@
 \alias{mccluskey}
 \title{McCluskey's two-output switching function}
 \format{
-A data frame with 16 rows: the conditions `A`, `B`, `C` and `D`,
-  and the outcomes `F1` and `F2`.
+A data frame with 16 rows: the conditions \code{A}, \code{B}, \code{C} and \code{D},
+and the outcomes \code{F1} and \code{F2}.
 }
 \source{
 Shipped with the Python CORA package,
-  <https://github.com/PoliUniLu/cora>.
+\url{https://github.com/PoliUniLu/cora}.
 }
 \usage{
 mccluskey

@@ -11,17 +11,17 @@ cora_irredundant_systems(
 )
 }
 \arguments{
-\item{ctx}{A [cora_context()] with more than one outcome.}
+\item{ctx}{A \code{\link[=cora_context]{cora_context()}} with more than one outcome.}
 
 \item{max_depth}{Optional upper bound on the number of distinct prime
-implicants a system may contain, as in [cora_irredundant_sums()].}
+implicants a system may contain, as in \code{\link[=cora_irredundant_sums]{cora_irredundant_sums()}}.}
 
-\item{search}{How `max_depth` is applied, as in [cora_irredundant_sums()].
-`"bounded"` also bounds each outcome's own chart, which is what makes a
+\item{search}{How \code{max_depth} is applied, as in \code{\link[=cora_irredundant_sums]{cora_irredundant_sums()}}.
+\code{"bounded"} also bounds each outcome's own chart, which is what makes a
 system of several outcomes over a large chart solvable at all.}
 }
 \value{
-A list of systems, of class `cora_systems`.
+A list of systems, of class \code{cora_systems}.
 }
 \description{
 Solves the prime implicant chart of every outcome and combines the

@@ -20,16 +20,16 @@ cora_context(
 \arguments{
 \item{data}{A data frame. Input columns must hold non-negative integers
 coded from zero upwards; output columns must be binary unless their
-analysed values are declared in `output_labels`.}
+analysed values are declared in \code{output_labels}.}
 
 \item{output_labels}{Character vector naming the outcome columns. A
 multi-value outcome declares the values that count as positive in curly
-brackets, e.g. `"OUT{1,2}"`.}
+brackets, e.g. \code{"OUT{1,2}"}.}
 
 \item{input_labels}{Character vector naming the input columns. Defaults to
 every column that is neither an outcome nor the case column.}
 
-\item{case_col}{Name of the column holding case identifiers, or `NULL`.}
+\item{case_col}{Name of the column holding case identifiers, or \code{NULL}.}
 
 \item{n_cut}{Minimum number of cases below which a truth table row is
 declared a don't care.}
@@ -38,19 +38,19 @@ declared a don't care.}
 function value of 1.}
 
 \item{inc_score2}{Maximum sufficiency inclusion score for an output
-function value of 0, or `NULL`.}
+function value of 0, or \code{NULL}.}
 
-\item{U}{Either 0 or 1; required when `inc_score2` is given.}
+\item{U}{Either 0 or 1; required when \code{inc_score2} is given.}
 
-\item{rename_columns}{If `TRUE`, input columns are renamed to single
+\item{rename_columns}{If \code{TRUE}, input columns are renamed to single
 letters in alphabetical order.}
 
-\item{algorithm}{`"ON-DC"` (the classical Quine-McCluskey algorithm over
-positive and don't care terms) or `"ON-OFF"` (McCluskey's modified
+\item{algorithm}{\code{"ON-DC"} (the classical Quine-McCluskey algorithm over
+positive and don't care terms) or \code{"ON-OFF"} (McCluskey's modified
 algorithm over positive and negative terms).}
 }
 \value{
-An object of class `cora_context`.
+An object of class \code{cora_context}.
 }
 \description{
 Bundles the data and the analytical choices that drive a Combinational
@@ -66,6 +66,6 @@ cora_prime_implicants(ctx)
 
 }
 \seealso{
-[cora_truth_table()], [cora_prime_implicants()],
-  [cora_irredundant_sums()], [cora_irredundant_systems()]
+\code{\link[=cora_truth_table]{cora_truth_table()}}, \code{\link[=cora_prime_implicants]{cora_prime_implicants()}},
+\code{\link[=cora_irredundant_sums]{cora_irredundant_sums()}}, \code{\link[=cora_irredundant_systems]{cora_irredundant_systems()}}
 }

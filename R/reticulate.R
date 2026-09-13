@@ -4,11 +4,19 @@
 
 #' Is the Python CORA package reachable?
 #'
+#' Answering the question means asking 'reticulate' for a module, which starts
+#' Python. On a machine where no interpreter has been configured, recent
+#' versions of 'reticulate' provision one at that moment, which can take half a
+#' minute and reach the network. The example is therefore not run
+#' automatically; call it yourself when you want the answer.
+#'
 #' @return `TRUE` when both 'reticulate' and the Python `cora` module are
 #'   available, `FALSE` otherwise.
 #'
 #' @examples
+#' \dontrun{
 #' cora_python_available()
+#' }
 #' @export
 cora_python_available <- function() {
   if (!requireNamespace("reticulate", quietly = TRUE)) return(FALSE)
@@ -61,10 +69,14 @@ summarise_result <- function(implicants, solutions, multi_output) {
 #'   invisibly returned alongside a printed report.
 #'
 #' @examples
+#' \dontrun{
+#' ## Needs a Python installation carrying the original `cora` package, so it
+#' ## is not run automatically. See `cora_python_available()`.
 #' df <- data.frame(A = c(1, 0, 1, 0), B = c(1, 0, 0, 1),
 #'                  C = c(0, 1, 1, 0), OUT = c(1, 1, 0, 1))
 #' if (cora_python_available()) {
 #'   cora_compare_python(cora_context(df, "OUT"))
+#' }
 #' }
 #' @export
 cora_compare_python <- function(ctx) {

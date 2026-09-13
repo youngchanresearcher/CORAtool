@@ -5,20 +5,20 @@
 \alias{gross_carvin}
 \title{Tort liability of highway authorities}
 \format{
-A data frame with 18 rows: the case label `Case`, the conditions
-  `PRIC`, `LENG`, `UPSI`, `DOSI`, `RISK`, `FRFL` and `MIMA`, and the
-  outcome `TORT`.
+A data frame with 18 rows: the case label \code{Case}, the conditions
+\code{PRIC}, \code{LENG}, \code{UPSI}, \code{DOSI}, \code{RISK}, \code{FRFL} and \code{MIMA}, and the
+outcome \code{TORT}.
 }
 \source{
 Shipped with the Python CORA package,
-  <https://github.com/PoliUniLu/cora>.
+\url{https://github.com/PoliUniLu/cora}.
 }
 \usage{
 gross_carvin
 }
 \description{
 Multi-value data on tort claims against highway authorities, used as the
-  single-outcome example of the Python CORA package.
+single-outcome example of the Python CORA package.
 }
 \examples{
 ctx <- cora_context(gross_carvin, "TORT", case_col = "Case")

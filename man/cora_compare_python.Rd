@@ -7,22 +7,26 @@
 cora_compare_python(ctx)
 }
 \arguments{
-\item{ctx}{A [cora_context()].}
+\item{ctx}{A \code{\link[=cora_context]{cora_context()}}.}
 }
 \value{
-A list with the two summaries and a logical `agrees` flag,
-  invisibly returned alongside a printed report.
+A list with the two summaries and a logical \code{agrees} flag,
+invisibly returned alongside a printed report.
 }
 \description{
-Runs the same analysis through the original Python `cora` package and
+Runs the same analysis through the original Python \code{cora} package and
 compares the prime implicants and the irredundant solutions. Results are
 compared as sets: the two implementations enumerate solutions in different
 orders, so the running numbers of the solutions need not line up.
 }
 \examples{
+\dontrun{
+## Needs a Python installation carrying the original `cora` package, so it
+## is not run automatically. See `cora_python_available()`.
 df <- data.frame(A = c(1, 0, 1, 0), B = c(1, 0, 0, 1),
                  C = c(0, 1, 1, 0), OUT = c(1, 1, 0, 1))
 if (cora_python_available()) {
   cora_compare_python(cora_context(df, "OUT"))
+}
 }
 }

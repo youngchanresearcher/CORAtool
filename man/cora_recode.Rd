@@ -13,13 +13,13 @@ cora_recode(data, conditions = NULL)
 to every integer-valued column that is not already coded from zero.}
 }
 \value{
-`data` with the named columns recoded.
+\code{data} with the named columns recoded.
 }
 \description{
 CORA reads a condition's values as the levels of a factor coded from zero
-upwards. Data seldom arrives that way: `as.integer()` on a factor numbers
+upwards. Data seldom arrives that way: \code{as.integer()} on a factor numbers
 the levels from one, and rating scales are usually stored as they were
-collected. This function maps each named condition onto `0, 1, 2, ...`,
+collected. This function maps each named condition onto \verb{0, 1, 2, ...},
 keeping the order of its values, and leaves every other column alone.
 }
 \examples{

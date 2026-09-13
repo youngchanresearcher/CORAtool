@@ -7,18 +7,18 @@
 cora_pi_details(ctx, max_solutions = 50)
 }
 \arguments{
-\item{ctx}{A [cora_context()].}
+\item{ctx}{A \code{\link[=cora_context]{cora_context()}}.}
 
 \item{max_solutions}{Largest number of solution columns to build. A chart
 with many prime implicants can have tens of thousands of solutions, and
-one column each is a table nobody can read; the first `max_solutions` are
-kept and a message says how many were left out. `Inf` keeps all of them.}
+one column each is a table nobody can read; the first \code{max_solutions} are
+kept and a message says how many were left out. \code{Inf} keeps all of them.}
 }
 \value{
 A data frame with one row per prime implicant holding its coverage
-  score (`Cov.r`), its inclusion score (`Inc.`) and, for every solution,
-  the share of the outcome that the prime implicant covers uniquely within
-  that solution. `NA` marks a prime implicant absent from a solution.
+score (\code{Cov.r}), its inclusion score (\code{Inc.}) and, for every solution,
+the share of the outcome that the prime implicant covers uniquely within
+that solution. \code{NA} marks a prime implicant absent from a solution.
 }
 \description{
 Statistical overview of the prime implicants

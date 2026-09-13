@@ -10,12 +10,12 @@ cora_coverage_score(x, ...)
 cora_inclusion_score(x, ...)
 }
 \arguments{
-\item{x}{A prime implicant, as returned by [cora_prime_implicants()].}
+\item{x}{A prime implicant, as returned by \code{\link[=cora_prime_implicants]{cora_prime_implicants()}}.}
 
 \item{...}{Unused.}
 }
 \value{
-A single number, or `NaN` when the denominator is empty.
+A single number, or \code{NaN} when the denominator is empty.
 }
 \description{
 The coverage score is the share of the cases showing the outcome that the

@@ -5,20 +5,20 @@
 \alias{bergschlosser}
 \title{Berg-Schlosser and De Meur's praetorianism data}
 \format{
-A data frame with 48 rows: the case label `Case`, the conditions
-  `AGRPOP`, `PARCL`, `APROG`, `PS`, `RQ` and `LRC`, and the outcomes
-  `AUTH`, `DEM` and `PRAET`.
+A data frame with 48 rows: the case label \code{Case}, the conditions
+\code{AGRPOP}, \code{PARCL}, \code{APROG}, \code{PS}, \code{RQ} and \code{LRC}, and the outcomes
+\code{AUTH}, \code{DEM} and \code{PRAET}.
 }
 \source{
 Shipped with the Python CORA package,
-  <https://github.com/PoliUniLu/cora>.
+\url{https://github.com/PoliUniLu/cora}.
 }
 \usage{
 bergschlosser
 }
 \description{
 Multi-value data on 48 African countries with three outcome columns,
-`AUTH`, `DEM` and `PRAET`.
+\code{AUTH}, \code{DEM} and \code{PRAET}.
 }
 \examples{
 ctx <- cora_context(bergschlosser, "PRAET",

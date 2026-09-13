@@ -7,9 +7,9 @@
 cora_truth_table(ctx, raw = FALSE)
 }
 \arguments{
-\item{ctx}{A [cora_context()].}
+\item{ctx}{A \code{\link[=cora_context]{cora_context()}}.}
 
-\item{raw}{If `TRUE`, also return the case counts, the case labels and the
+\item{raw}{If \code{TRUE}, also return the case counts, the case labels and the
 raw inclusion scores of every configuration.}
 }
 \value{

@@ -70,6 +70,17 @@ changes is which input is refused, and how.
   `cora_pi_details()` and `cora_solutions()` lay out the first 50 rather than
   building a table tens of thousands of columns wide. `max_solutions = Inf`
   asks for all of them.
+* The help pages are written in markdown now, so a cross-reference reads as a
+  link rather than as the literal text `[cora_context()]`, and inline code is
+  set as code rather than printed with its backticks. `R CMD check --as-cran`
+  no longer reports lost braces in `cora_context()`, `cora_logigram()` and
+  `cora_prime_implicants()`, where a value set written `{1,2}` was being
+  swallowed by the Rd parser.
+* The two examples that can start Python are marked `\dontrun{}`. Asking
+  'reticulate' whether the Python `cora` module is there starts an
+  interpreter, and on a machine with none configured recent versions of
+  'reticulate' provision one on the spot: 28 seconds of wall clock and a
+  network round trip, inside what is supposed to be a fast example.
 * An outcome named among its own conditions is refused: it explains itself
   perfectly and says nothing about anything else.
 * A case column naming no column in the data is refused rather than ignored,

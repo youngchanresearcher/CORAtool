@@ -7,18 +7,18 @@
 cora_solutions(ctx, max_solutions = 50)
 }
 \arguments{
-\item{ctx}{A [cora_context()].}
+\item{ctx}{A \code{\link[=cora_context]{cora_context()}}.}
 
 \item{max_solutions}{Largest number of solutions to lay out. A chart with
 many prime implicants can have tens of thousands, so the first
-`max_solutions` are kept and a message says how many were left out.
-`Inf` keeps all of them.}
+\code{max_solutions} are kept and a message says how many were left out.
+\code{Inf} keeps all of them.}
 }
 \value{
 A data frame with one column per prime implicant marking, with a 1,
-  the solutions the prime implicant belongs to. In the multi-outcome case
-  each system contributes one row per outcome, and the `Output` and
-  `System` columns identify them.
+the solutions the prime implicant belongs to. In the multi-outcome case
+each system contributes one row per outcome, and the \code{Output} and
+\code{System} columns identify them.
 }
 \description{
 Solution summary table

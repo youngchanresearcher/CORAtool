@@ -5,12 +5,12 @@
 \alias{swiss_minaret}
 \title{Swiss minaret referendum}
 \format{
-A data frame with 11 rows and 6 columns: the conditions `A`, `L`,
-  `S` and `T`, and the outcomes `X` and `M`.
+A data frame with 11 rows and 6 columns: the conditions \code{A}, \code{L},
+\code{S} and \code{T}, and the outcomes \code{X} and \code{M}.
 }
 \source{
 Shipped with the Python CORA package,
-  <https://github.com/PoliUniLu/cora>.
+\url{https://github.com/PoliUniLu/cora}.
 }
 \usage{
 swiss_minaret

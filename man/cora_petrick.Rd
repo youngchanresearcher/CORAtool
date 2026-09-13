@@ -16,10 +16,10 @@ multiplied out rather than to the finished list, which is what makes a
 large chart solvable at all; the sums returned are the same either way.}
 }
 \value{
-A list with `essential`, the indices of the prime implicants that
-  are the only cover of some row, and `sums`, a list of integer vectors
-  holding the prime implicant indices of every irredundant sum. Indices
-  are one-based positions in `coverages`.
+A list with \code{essential}, the indices of the prime implicants that
+are the only cover of some row, and \code{sums}, a list of integer vectors
+holding the prime implicant indices of every irredundant sum. Indices
+are one-based positions in \code{coverages}.
 }
 \description{
 Solve a prime implicant chart with Petrick's method

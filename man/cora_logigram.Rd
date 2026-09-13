@@ -29,11 +29,12 @@ cora_logigram(x, ...)
 }
 \arguments{
 \item{x}{A character vector of functions in disjunctive normal form, such
-as `"A*B+c*A+b<=>F"` or `"A{1}*B{2}+C{0}<=>F"`, one entry per outcome.
-Square brackets are read as curly ones, so the `"A[1]*B[2]"` notation of
+as \code{"A*B+c*A+b<=>F"} or \code{"A{1}*B{2}+C{0}<=>F"}, one entry per
+outcome.
+Square brackets are read as curly ones, so the \code{"A[1]*B[2]"} notation of
 the QCA package is accepted too.
-A [cora_context()] or a solution from [cora_irredundant_sums()] or
-[cora_irredundant_systems()] is accepted directly and converted first.}
+A \code{\link[=cora_context]{cora_context()}} or a solution from \code{\link[=cora_irredundant_sums]{cora_irredundant_sums()}} or
+\code{\link[=cora_irredundant_systems]{cora_irredundant_systems()}} is accepted directly and converted first.}
 
 \item{...}{Passed to methods.}
 
@@ -41,17 +42,17 @@ A [cora_context()] or a solution from [cora_irredundant_sums()] or
 
 \item{color_and}{Fill colour of the AND gates.}
 
-\item{notation}{`"case"` when a negated literal is written in lower case,
-`"prime"` when it is written with a trailing apostrophe.}
+\item{notation}{\code{"case"} when a negated literal is written in lower case,
+\code{"prime"} when it is written with a trailing apostrophe.}
 
 \item{title}{Text printed above the diagram, one line per element. The
-default, `NULL`, prints the expression the diagram stands for; for a
+default, \code{NULL}, prints the expression the diagram stands for; for a
 solution object that is the solution itself, essential prime implicants
-still marked with `#`. Pass `NA` to print no title.}
+still marked with \verb{#}. Pass \code{NA} to print no title.}
 
 \item{subtitle}{A single line printed under the title. The default,
-`NULL`, prints the coverage and inclusion scores when the object drawn
-carries them, and nothing otherwise. Pass `NA` to print no subtitle.}
+\code{NULL}, prints the coverage and inclusion scores when the object drawn
+carries them, and nothing otherwise. Pass \code{NA} to print no subtitle.}
 
 \item{show_terms}{Print each conjunction next to the gate that forms it.
 Useful when the diagram is read on its own, away from the solution.}

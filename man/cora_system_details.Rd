@@ -7,11 +7,11 @@
 cora_system_details(ctx)
 }
 \arguments{
-\item{ctx}{A [cora_context()].}
+\item{ctx}{A \code{\link[=cora_context]{cora_context()}}.}
 }
 \value{
 A one-row data frame with the coverage and inclusion score of the
-  first irredundant solution.
+first irredundant solution.
 }
 \description{
 Statistical overview of a solution

@@ -7,12 +7,18 @@
 cora_python_available()
 }
 \value{
-`TRUE` when both 'reticulate' and the Python `cora` module are
-  available, `FALSE` otherwise.
+\code{TRUE} when both 'reticulate' and the Python \code{cora} module are
+available, \code{FALSE} otherwise.
 }
 \description{
-Is the Python CORA package reachable?
+Answering the question means asking 'reticulate' for a module, which starts
+Python. On a machine where no interpreter has been configured, recent
+versions of 'reticulate' provision one at that moment, which can take half a
+minute and reach the network. The example is therefore not run
+automatically; call it yourself when you want the answer.
 }
 \examples{
+\dontrun{
 cora_python_available()
+}
 }

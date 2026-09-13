@@ -22,7 +22,7 @@ cora_data_mining(
 \item{data}{A data frame.}
 
 \item{output_labels}{Character vector naming the outcome columns, in the
-notation accepted by [cora_context()].}
+notation accepted by \code{\link[=cora_context]{cora_context()}}.}
 
 \item{len_of_tuple}{Number of input variables to combine.}
 
@@ -30,7 +30,7 @@ notation accepted by [cora_context()].}
 from. Defaults to every column that is neither an outcome nor the case
 column.}
 
-\item{case_col}{Name of the column holding case identifiers, or `NULL`.}
+\item{case_col}{Name of the column holding case identifiers, or \code{NULL}.}
 
 \item{n_cut}{Minimum number of cases below which a truth table row is
 declared a don't care.}
@@ -39,19 +39,19 @@ declared a don't care.}
 function value of 1.}
 
 \item{inc_score2}{Maximum sufficiency inclusion score for an output
-function value of 0, or `NULL`.}
+function value of 0, or \code{NULL}.}
 
-\item{U}{Either 0 or 1; required when `inc_score2` is given.}
+\item{U}{Either 0 or 1; required when \code{inc_score2} is given.}
 
-\item{algorithm}{`"ON-DC"` or `"ON-OFF"`.}
+\item{algorithm}{\code{"ON-DC"} or \code{"ON-OFF"}.}
 
-\item{automatic}{If `TRUE`, the search widens the tuple length until a
+\item{automatic}{If \code{TRUE}, the search widens the tuple length until a
 non-zero solution is found.}
 }
 \value{
 A data frame with one row per tuple, holding the number of
-  irredundant solutions and the best inclusion, coverage and combined
-  score across them.
+irredundant solutions and the best inclusion, coverage and combined
+score across them.
 }
 \description{
 Analyses every n-tuple of input variables in search of tuples that
@@ -60,11 +60,11 @@ Occam's razor: it keeps the number of inputs required for a solution at a
 minimum.
 }
 \note{
-A tuple whose only solution is the tautology `1` explains
-  nothing, and is reported with zero solutions and zero scores. The
-  Python implementation intends the same but never reaches the case,
-  because it compares the solution against "1" after the tautology
-  has already been marked essential and renamed to "#1".
+A tuple whose only solution is the tautology \code{1} explains
+nothing, and is reported with zero solutions and zero scores. The
+Python implementation intends the same but never reaches the case,
+because it compares the solution against "1" after the tautology
+has already been marked essential and renamed to "#1".
 }
 \examples{
 data <- data.frame(A = c(1, 1, 1, 0), B = c(0, 1, 0, 1),

@@ -14,31 +14,31 @@ switching circuit analysis. It handles multi-value conditions and, unlike
 related methods, structures with simple as well as complex effects.
 }
 \details{
-CORAtool is a port of the Python packages `CORA` and `LOGIGRAM` by
+CORAtool is a port of the Python packages \code{CORA} and \code{LOGIGRAM} by
 Sebechlebská, Mkrtchyan and Thiem. It computes in plain R and needs no
-Python installation; [cora_python_available()] and the functions around it
+Python installation; \code{\link[=cora_python_available]{cora_python_available()}} and the functions around it
 exist only to cross-check results against the original implementation.
 }
 \section{Workflow}{
 
-Build a context with [cora_context()], inspect the truth table with
-[cora_truth_table()], minimise it with [cora_prime_implicants()], and
-solve the prime implicant chart with [cora_irredundant_sums()] (one
-outcome) or [cora_irredundant_systems()] (several outcomes). Summaries are
-available from [cora_pi_details()], [cora_system_details()] and
-[cora_solutions()]; [cora_logigram()] draws the solution as a two-level
+Build a context with \code{\link[=cora_context]{cora_context()}}, inspect the truth table with
+\code{\link[=cora_truth_table]{cora_truth_table()}}, minimise it with \code{\link[=cora_prime_implicants]{cora_prime_implicants()}}, and
+solve the prime implicant chart with \code{\link[=cora_irredundant_sums]{cora_irredundant_sums()}} (one
+outcome) or \code{\link[=cora_irredundant_systems]{cora_irredundant_systems()}} (several outcomes). Summaries are
+available from \code{\link[=cora_pi_details]{cora_pi_details()}}, \code{\link[=cora_system_details]{cora_system_details()}} and
+\code{\link[=cora_solutions]{cora_solutions()}}; \code{\link[=cora_logigram]{cora_logigram()}} draws the solution as a two-level
 logic diagram.
 }
 
 \references{
 Thiem, A., Mkrtchyan, L., and Sebechlebská, Z. (2022). Combinational
 Regularity Analysis (CORA) - a new method for uncovering complex causation
-in medical and health research. *BMC Medical Research Methodology*, 22(1),
+in medical and health research. \emph{BMC Medical Research Methodology}, 22(1),
 333. \doi{10.1186/s12874-022-01800-9}
 
 Sebechlebská, Z., Mkrtchyan, L., and Thiem, A. (2023). CORA and LOGIGRAM: A
 duo of Python packages for Combinational Regularity Analysis (CORA).
-*Journal of Open Source Software*, 8(85), 5019.
+\emph{Journal of Open Source Software}, 8(85), 5019.
 \doi{10.21105/joss.05019}
 }
 \seealso{
