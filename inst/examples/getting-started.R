@@ -111,8 +111,26 @@ cora_data_mining(z, "Z", len_of_tuple = 1, automatic = TRUE)
 ## 7. Logic diagrams
 ## ---------------------------------------------------------------------------
 
+## A solution writes itself above its own diagram: the implicants, with the
+## "#" that marks an essential one, and the coverage and inclusion scores.
 cora_logigram(cora_irredundant_sums(ctx)[[1]])
+
+## One line per outcome, and a shared implicant drawn once, feeding both
+## OR gates.
 cora_logigram(cora_irredundant_systems(mn)[[1]])
+
+## Each gate labelled with the conjunction it forms, for a diagram that
+## has to be read away from the solution.
+cora_logigram(cora_irredundant_sums(tort)[[1]], show_terms = TRUE)
+
+## No header at all, when the caption is written by hand instead.
+cora_logigram(cora_irredundant_sums(ctx)[[1]], title = NA, subtitle = NA)
+
+## Or a header of your own.
+cora_logigram(cora_irredundant_sums(ctx)[[1]],
+              title = "Figure 3: sufficient conditions for OUT",
+              subtitle = "N = 4, ON-DC")
+
 cora_logigram("A{1}*B{2}+C{0}<=>F")   # also takes "A*b+C<=>F" and "A[1]*B[2]"
 
 ## Saving one to a file.
