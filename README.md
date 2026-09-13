@@ -147,9 +147,16 @@ the five stages, how to read coverage and inclusion, multi-value conditions
 and complex effects, the diagrams, choosing between the algorithms, and what
 to do when there are more solutions than anyone can report.
 
-`inst/docs/manual_zh-TW.md` is a fuller manual in Traditional Chinese,
-covering the same ground in more depth plus the comparison with the Python
-implementation, QCA, QCApro and cna, with source locations for every claim.
+A fuller manual goes further: the theory, every stage of the pipeline, how to
+read a diagram, the six defects found in the Python implementation with their
+source locations, and how QCA, QCApro and cna handle the same problems. It
+ships in both English and Traditional Chinese:
+
+```r
+file.show(system.file("docs", "manual_en.md", package = "CORA"))
+file.show(system.file("docs", "manual_zh-TW.md", package = "CORA"))
+```
+
 `inst/examples/getting-started.R` is a runnable script over the same
 material.
 

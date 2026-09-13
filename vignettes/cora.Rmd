@@ -267,16 +267,10 @@ It departs from the original in seven documented places. The departures that
 change numbers are: data not coded from zero is refused rather than analysed;
 an implicant's inclusion score is measured against the outcome it is an
 implicant of, so the two algorithms agree; and a tuple whose only solution is
-the tautology scores zero in data mining rather than a perfect one. Each is
-recorded with its source location and a reproducible example in the extended
-manual,
-
-```r
-file.show(system.file("docs", "manual_zh-TW.md", package = "CORA"))
-```
-
-and the evidence behind the comparison is in `tools/VALIDATION.md` in the
-source repository.
+the tautology scores zero in data mining rather than a perfect one. Appendix A
+of the extended manual records each with its source location and a
+reproducible example, and the evidence behind the comparison is in
+`tools/VALIDATION.md` in the source repository.
 
 If the Python package is installed, `cora_compare_python()` will run both and
 compare them.
@@ -298,7 +292,13 @@ compare them.
 
 ## Extended manual
 
-`inst/docs/manual_zh-TW.md` is a fuller manual in Traditional Chinese,
-covering the theory, the output, the diagrams and the comparison with the
-Python implementation, QCA, QCApro and cna in more depth than this vignette.
+A fuller manual covers the theory, the output, the diagrams and the
+comparison with the Python implementation, QCA, QCApro and cna in more depth
+than this vignette. It ships in English and in Traditional Chinese:
+
+```r
+file.show(system.file("docs", "manual_en.md", package = "CORA"))
+file.show(system.file("docs", "manual_zh-TW.md", package = "CORA"))
+```
+
 `inst/examples/getting-started.R` is the same ground as a runnable script.

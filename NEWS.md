@@ -70,13 +70,17 @@ changes is which input is refused, and how.
 * Outcomes declared inconsistently — one with values in curly brackets, one
   without — now say so instead of reporting the declaration as a column name
   missing from the data.
+* The extended manual now ships in English as well as Traditional Chinese,
+  as `inst/docs/manual_en.md` and `inst/docs/manual_zh-TW.md`. Both carry the
+  same nine sections and four appendices.
 * A vignette, `vignette("cora")`, walks through an analysis in English: what
   the method looks for, the five stages, reading the scores, multi-value
   conditions, complex effects, diagrams, choosing an algorithm, the zero-based
   coding requirement, and what to do when there are more solutions than can be
   reported. The Traditional Chinese manual remains the fuller reference.
 * `citation("CORA")` reports the installed version rather than a version
-  string fixed when the file was written.
+  string fixed when the file was written, and `inst/CITATION` is pure ASCII
+  so it does not depend on an encoding being declared elsewhere.
 * New property tests check what must hold of any correct output — coverage,
   irredundance, primality, essentiality, score ranges, and agreement between
   the two algorithms — over randomly generated data, without needing the
