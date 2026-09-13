@@ -18,9 +18,8 @@ Lusine Mkrtchyan and Alrik Thiem. **It computes in plain R and requires no
 Python installation.**
 
 It is an independent implementation and is not endorsed by the authors of
-the original packages. Where it goes wrong, including where it departs from
-the Python implementation on purpose, the responsibility is this package's
-and not theirs.
+the original packages. Anything it gets wrong by departing from the Python
+implementation is this package's responsibility, not theirs.
 
 ## Installation
 
