@@ -113,6 +113,13 @@ cora_logigram(cora_irredundant_sums(ctx)[[1]])
 | `cora_data_mining()` | configurational data mining |
 | `cora_compare_python()` | optional cross-check against the Python package |
 
+## Documentation
+
+`inst/docs/manual_zh-TW.md` is a full manual in Traditional Chinese: the
+theory behind the method, what goes in and what comes out, how to read the
+notation and the scores, and the parameter choices that matter.
+`inst/examples/getting-started.R` is the same ground as runnable code.
+
 ## Bundled data
 
 `swiss_minaret`, `gross_carvin`, `mccluskey` and `bergschlosser`, all taken
