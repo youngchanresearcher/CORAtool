@@ -66,5 +66,10 @@ run <- function(spec) {
 }
 
 specs <- jsonlite::fromJSON(args[[1]], simplifyVector = FALSE)
-res <- lapply(specs, run)
+res <- list()
+for (nm in names(specs)) {
+  t0 <- proc.time()[[3]]
+  res[[nm]] <- run(specs[[nm]])
+  message(sprintf("%-40s %6.1fs", nm, proc.time()[[3]] - t0))
+}
 cat(jsonlite::toJSON(res, auto_unbox = FALSE, pretty = 1, null = "null"))

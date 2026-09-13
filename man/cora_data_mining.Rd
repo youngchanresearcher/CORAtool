@@ -59,6 +59,13 @@ generate a solution, which amounts to a configurational version of
 Occam's razor: it keeps the number of inputs required for a solution at a
 minimum.
 }
+\note{
+A tuple whose only solution is the tautology `1` explains
+  nothing, and is reported with zero solutions and zero scores. The
+  Python implementation intends the same but never reaches the case,
+  because it compares the solution against "1" after the tautology
+  has already been marked essential and renamed to "#1".
+}
 \examples{
 data <- data.frame(A = c(1, 1, 1, 0), B = c(0, 1, 0, 1),
                    C = c(1, 1, 0, 0), O = c(0, 1, 0, 1))

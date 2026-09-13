@@ -1,30 +1,63 @@
 ## Petrick's method: derives every irredundant sum from a prime implicant
 ## chart by multiplying out the coverage conditions with absorption.
 
-## Boolean multiplication of two sums of products. Each product is a sorted
-## integer vector; absorption keeps only the minimal products.
+## Products of implicant indices are held as bit masks (30 bits per word),
+## so that absorption can test a whole sum of products at once.
+MASK_BITS <- 30L
+
+idx_to_mask <- function(v, nwords) {
+  m <- integer(nwords)
+  if (length(v) == 0L) return(m)
+  w <- (v - 1L) %/% MASK_BITS + 1L
+  b <- (v - 1L) %% MASK_BITS
+  for (i in seq_along(v)) m[[w[[i]]]] <- bitwOr(m[[w[[i]]]], bitwShiftL(1L, b[[i]]))
+  m
+}
+
+mask_to_idx <- function(m) {
+  out <- integer(0)
+  for (w in seq_along(m)) {
+    if (m[[w]] == 0L) next
+    bits <- 0:(MASK_BITS - 1L)
+    set <- bits[bitwAnd(m[[w]], bitwShiftL(1L, bits)) != 0L]
+    out <- c(out, (w - 1L) * MASK_BITS + set + 1L)
+  }
+  out
+}
+
+## Boolean multiplication of two sums of products, with absorption
+## (X + XY = X) applied eagerly so that only minimal products survive.
 boolean_multiply_sets <- function(x, y) {
-  res <- list()
-  res_keys <- character(0)
-  for (xi in x) {
-    for (yi in y) {
-      tmp <- sort(unique(c(xi, yi)))
-      if (length(res)) {
-        ## X + XY = X: drop products that contain the new one ...
-        keep <- !vapply(res, function(z) all(tmp %in% z), logical(1))
-        res <- res[keep]
-        res_keys <- res_keys[keep]
-        ## ... and skip the new one when it contains an existing product.
-        if (any(vapply(res, function(z) all(z %in% tmp), logical(1)))) next
+  if (length(x) == 0L || length(y) == 0L) return(list())
+  maxi <- max(c(unlist(x, use.names = FALSE), unlist(y, use.names = FALSE)))
+  nw <- (maxi - 1L) %/% MASK_BITS + 1L
+  xm <- lapply(x, idx_to_mask, nwords = nw)
+  ym <- lapply(y, idx_to_mask, nwords = nw)
+
+  res <- matrix(integer(0), nrow = 0L, ncol = nw)
+  for (a in xm) {
+    for (b in ym) {
+      tmp <- bitwOr(a, b)
+      if (nrow(res) > 0L) {
+        rep_tmp <- rep(tmp, each = nrow(res))
+        anded <- matrix(bitwAnd(res, rep_tmp), nrow = nrow(res))
+        ## Drop stored products that contain the new one ...
+        contains <- rowSums(anded != rep_tmp) == 0L
+        if (any(contains)) {
+          res <- res[!contains, , drop = FALSE]
+          anded <- anded[!contains, , drop = FALSE]
+          rep_tmp <- rep(tmp, each = nrow(res))
+        }
+        ## ... and skip the new one when it contains a stored product.
+        if (nrow(res) > 0L &&
+            any(rowSums(anded != res) == 0L)) {
+          next
+        }
       }
-      key <- int_key(tmp)
-      if (!(key %in% res_keys)) {
-        res[[length(res) + 1L]] <- tmp
-        res_keys <- c(res_keys, key)
-      }
+      res <- rbind(res, tmp)
     }
   }
-  res
+  lapply(seq_len(nrow(res)), function(i) mask_to_idx(res[i, ]))
 }
 
 #' Solve a prime implicant chart with Petrick's method

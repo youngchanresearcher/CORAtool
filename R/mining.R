@@ -28,6 +28,12 @@
 #'   irredundant solutions and the best inclusion, coverage and combined
 #'   score across them.
 #'
+#' @note A tuple whose only solution is the tautology `1` explains
+#'   nothing, and is reported with zero solutions and zero scores. The
+#'   Python implementation intends the same but never reaches the case,
+#'   because it compares the solution against "1" after the tautology
+#'   has already been marked essential and renamed to "#1".
+#'
 #' @examples
 #' data <- data.frame(A = c(1, 1, 1, 0), B = c(0, 1, 0, 1),
 #'                    C = c(1, 1, 0, 0), O = c(0, 1, 0, 1))

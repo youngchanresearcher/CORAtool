@@ -130,6 +130,12 @@ coverage sets and solution sets agree. Two differences are worth knowing:
   prime implicant receives under `"ON-DC"`. This package uses the prime
   implicant's own outcomes in both algorithms, so the two agree.
 
+* **Tautologies in data mining.** A tuple of conditions whose only
+  solution is the tautology `1` is reported by `cora_data_mining()` with
+  zero solutions and zero scores. The Python implementation means to do
+  the same, but its check never fires, so such a tuple is scored as
+  though it explained the outcome.
+
 `cora_compare_python()` runs a context through both implementations and
 reports whether they agree; it needs `reticulate` and the Python package, and
 nothing else in the package does.

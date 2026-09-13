@@ -29,3 +29,19 @@ test_that("an out-of-range tuple length is refused", {
   data <- data.frame(A = c(1, 0), B = c(0, 1), O = c(1, 0))
   expect_error(cora_data_mining(data, "O", 5), "must lie between")
 })
+
+test_that("a tuple whose only solution is a tautology scores zero", {
+  ## Every observed configuration of A and B shows the outcome, so the pair
+  ## explains nothing and must not be ranked alongside a real solution.
+  data <- data.frame(A = c(1, 1, 0, 0), B = c(2, 1, 2, 2),
+                     C = c(0, 1, 1, 2), OUT = c(1, 1, 0, 1))
+  res <- cora_data_mining(data, "OUT", len_of_tuple = 2, inc_score1 = 0.5)
+
+  ab <- res[res$Combination == "A, B", ]
+  expect_equal(ab$Nr_of_systems, 0L)
+  expect_equal(ab$Score, 0)
+
+  ac <- res[res$Combination == "A, C", ]
+  expect_equal(ac$Nr_of_systems, 1L)
+  expect_equal(ac$Score, 1)
+})
