@@ -1,7 +1,7 @@
 Package: CORAtool
 Type: Package
 Title: Combinational Regularity Analysis
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(
     person("Young", "Chan", email = "youngchanresearcher@gmail.com",
            role = c("aut", "cre", "cph"),
@@ -13,10 +13,12 @@ Authors@R: c(
     person("Alrik", "Thiem", role = "cph",
            comment = "Copyright holder of the original Python implementation")
     )
-Description: Combinational Regularity Analysis (CORA) searches data for INUS
-    structures, that is, cause-effect relations marked by conjunctivity and
-    disjunctivity, using Boolean minimisation algorithms borrowed from
-    switching circuit analysis. Truth tables are minimised either with the
+Description: Searches configurational data for causes that are each an
+    insufficient but non-redundant part of an unnecessary but sufficient
+    (INUS) condition for their effect, so that cause-effect relations are
+    marked by conjunctivity and disjunctivity. The method, Combinational
+    Regularity Analysis (CORA), borrows its Boolean minimisation algorithms
+    from switching circuit analysis. Truth tables are minimised either with the
     classical Quine-McCluskey algorithm over positive and don't care terms or
     with McCluskey's modified algorithm over positive and negative terms, and
     the resulting prime implicant charts are solved with Petrick's method.

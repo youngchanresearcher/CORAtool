@@ -10,8 +10,12 @@ cora_compare_python(ctx)
 \item{ctx}{A \code{\link[=cora_context]{cora_context()}}.}
 }
 \value{
-A list with the two summaries and a logical \code{agrees} flag,
-invisibly returned alongside a printed report.
+An object of class \code{cora_comparison}: a list holding the two
+summaries (\code{r}, \code{python}), a logical \code{agrees}, and for each of
+\code{prime_implicants} and \code{solutions} a list of \code{agree}, \code{r_only} and
+\code{python_only}. Nothing is written to the console while it is computed;
+printing the object gives a short report of what agrees and what does
+not.
 }
 \description{
 Runs the same analysis through the original Python \code{cora} package and

@@ -65,8 +65,12 @@ summarise_result <- function(implicants, solutions, multi_output) {
 #'
 #' @param ctx A [cora_context()].
 #'
-#' @return A list with the two summaries and a logical `agrees` flag,
-#'   invisibly returned alongside a printed report.
+#' @return An object of class `cora_comparison`: a list holding the two
+#'   summaries (`r`, `python`), a logical `agrees`, and for each of
+#'   `prime_implicants` and `solutions` a list of `agree`, `r_only` and
+#'   `python_only`. Nothing is written to the console while it is computed;
+#'   printing the object gives a short report of what agrees and what does
+#'   not.
 #'
 #' @examples
 #' \dontrun{
@@ -123,14 +127,39 @@ cora_compare_python <- function(ctx) {
     }, character(1)))
   )
 
-  agrees <- identical(r_side$prime_implicants, py_side$prime_implicants) &&
-    identical(r_side$solutions, py_side$solutions)
+  pis <- compare_sets(r_side$prime_implicants, py_side$prime_implicants)
+  sols <- compare_sets(r_side$solutions, py_side$solutions)
+  structure(
+    list(r = r_side, python = py_side, agrees = pis$agree && sols$agree,
+         prime_implicants = pis, solutions = sols),
+    class = "cora_comparison"
+  )
+}
 
-  cat(sprintf("prime implicants: %s\n",
-              if (identical(r_side$prime_implicants,
-                            py_side$prime_implicants)) "agree" else "DIFFER"))
-  cat(sprintf("solutions       : %s\n",
-              if (identical(r_side$solutions, py_side$solutions)) "agree"
-              else "DIFFER"))
-  invisible(list(r = r_side, python = py_side, agrees = agrees))
+## What two sorted character vectors have in common and where they part.
+compare_sets <- function(r, python) {
+  list(agree = identical(r, python),
+       r_only = setdiff(r, python),
+       python_only = setdiff(python, r))
+}
+
+#' @export
+format.cora_comparison <- function(x, ...) {
+  part <- function(name, cmp) {
+    if (cmp$agree) return(sprintf("%-17s: agree", name))
+    c(sprintf("%-17s: DIFFER", name),
+      if (length(cmp$r_only))
+        sprintf("  only in R      : %s", paste(cmp$r_only, collapse = ", ")),
+      if (length(cmp$python_only))
+        sprintf("  only in Python : %s", paste(cmp$python_only, collapse = ", ")))
+  }
+  c("<cora_comparison>",
+    part("prime implicants", x$prime_implicants),
+    part("solutions", x$solutions))
+}
+
+#' @export
+print.cora_comparison <- function(x, ...) {
+  writeLines(format(x))
+  invisible(x)
 }

@@ -234,3 +234,40 @@ test_that("the inclusion band puts the middle where U says", {
   expect_equal(cora_truth_table(cora_context(band, "O", inc_score1 = 0.9))$O,
                band_at(0L))
 })
+
+test_that("the Python comparison reports through print(), not while computing", {
+  ## Building the object must write nothing; the report belongs to print().
+  agree <- structure(
+    list(r = NULL, python = NULL, agrees = TRUE,
+         prime_implicants = compare_sets(c("#A{1}", "#B{0}"), c("#A{1}", "#B{0}")),
+         solutions = compare_sets("#A{1}+#B{0}", "#A{1}+#B{0}")),
+    class = "cora_comparison")
+  expect_silent(agree$agrees)
+  expect_output(print(agree), "prime implicants : agree")
+  expect_output(vis <- withVisible(print(agree)))
+  expect_false(vis$visible)
+
+  ## When they part, the report says where, in both directions.
+  differ <- agree
+  differ$prime_implicants <- compare_sets(c("#A{1}", "#C{1}"), c("#A{1}", "#D{0}"))
+  differ$agrees <- FALSE
+  out <- format(differ)
+  expect_true(any(grepl("prime implicants : DIFFER", out, fixed = TRUE)))
+  expect_true(any(grepl("only in R      : #C{1}", out, fixed = TRUE)))
+  expect_true(any(grepl("only in Python : #D{0}", out, fixed = TRUE)))
+  expect_true(any(grepl("solutions        : agree", out, fixed = TRUE)))
+})
+
+test_that("nothing outside a print method writes to the console", {
+  ## CRAN asks that information be returned as an object and printed on
+  ## request. cat() and print() may appear only inside print.* methods.
+  fns <- ls(asNamespace("CORAtool"), all.names = TRUE)
+  offenders <- character(0)
+  for (f in fns) {
+    obj <- get(f, envir = asNamespace("CORAtool"))
+    if (!is.function(obj) || startsWith(f, "print.")) next
+    body_txt <- paste(deparse(body(obj)), collapse = "\n")
+    if (grepl("\\b(cat|print|writeLines)\\(", body_txt)) offenders <- c(offenders, f)
+  }
+  expect_identical(offenders, character(0))
+})
