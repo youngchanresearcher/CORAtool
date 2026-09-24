@@ -32,8 +32,11 @@ if (!identical(normalizePath(TARBALL, "/", TRUE),
          "\"Always keep on this device\", then run this again.")
   }
 }
-old_wd <- setwd(WORKDIR)
-on.exit(setwd(old_wd), add = TRUE)
+## No on.exit() here: under source() each top-level line is its own
+## evaluation, so on.exit() would undo the setwd() before the check ran.
+## R CMD check writes CORAtool.Rcheck into the working directory, which is
+## why it has to be WORKDIR, and the tarball is passed by its full path.
+setwd(WORKDIR)
 
 ## --- 2. say what the file actually is ---------------------------------------
 ## A truncated download and a renamed file both fail here rather than halfway
@@ -56,9 +59,14 @@ cat(sprintf("Package   : %s\n", desc[, "Package"]))
 cat(sprintf("Version   : %s\n", desc[, "Version"]))
 cat("\n")
 
+EXPECTED_VERSION <- "0.1.2"
 if (desc[, "Package"] != "CORAtool") {
   stop("This tarball is package '", desc[, "Package"],
        "', not CORAtool. You have an older build.")
+}
+if (desc[, "Version"] != EXPECTED_VERSION) {
+  stop("This tarball is version ", desc[, "Version"], ", not ",
+       EXPECTED_VERSION, ". You have an older build.")
 }
 
 ## --- 3. run the check -------------------------------------------------------
@@ -74,7 +82,7 @@ flush.console()
 t0 <- Sys.time()
 out <- system2(file.path(R.home("bin"), "R"),
                c("CMD", "check", "--as-cran", "--no-manual",
-                 shQuote(basename(local_tar))),
+                 shQuote(normalizePath(local_tar, "/"))),
                stdout = TRUE, stderr = TRUE)
 elapsed <- as.numeric(difftime(Sys.time(), t0, units = "mins"))
 
@@ -113,15 +121,21 @@ verdicts <- function(lines) {
   out <- character(0)
   for (i in seq_along(heads)) {
     block <- lines[bounds[i]:(bounds[i + 1L] - 1L)]
+    label <- substr(sub("\\.\\.\\..*$", "", block[1]), 1, 64)
     hit <- regmatches(block[1], regexpr("(NOTE|WARNING|ERROR)\\s*$", block[1]))
-    if (length(hit) == 0L) {
-      loose <- grep("^\\s*(NOTE|WARNING|ERROR)\\s*$", block[-1], value = TRUE)
-      if (length(loose)) hit <- trimws(loose[length(loose)])
+    loose_at <- grep("^\\s*(NOTE|WARNING|ERROR)\\s*$", block)
+    loose_at <- loose_at[loose_at > 1L]
+    if (length(hit) == 0L && length(loose_at)) {
+      at <- loose_at[length(loose_at)]
+      hit <- trimws(block[at])
+      ## A header that already said OK did not produce this verdict: some
+      ## check printed it without a header of its own. Name it by the line
+      ## that explains it instead of blaming the OK check above.
+      if (grepl("\\bOK\\s*$", block[1]) && at < length(block))
+        label <- paste0("  (unlabelled) ", substr(block[at + 1L], 1, 50))
     }
     if (length(hit))
-      out <- c(out, sprintf("%-64s %s",
-                            substr(sub("\\.\\.\\..*$", "", block[1]), 1, 64),
-                            trimws(hit)))
+      out <- c(out, sprintf("%-64s %s", label, trimws(hit)))
   }
   out
 }
@@ -150,3 +164,45 @@ if (any(grepl("Conflicting package names", out))) {
   cat("UNKNOWN. The incoming check could not reach CRAN, so it never compared\n")
   cat("the name. Check the machine's internet connection and run this again.\n")
 }
+
+## --- 6. the three things CRAN asked for in 0.1.2 ----------------------------
+## Read from the copy the check itself installed, so this is the build that
+## would be submitted rather than whatever is in your usual library.
+
+cat("\n--- the three CRAN requests ---------------------------------------------\n")
+lib <- file.path(WORKDIR, "CORAtool.Rcheck")
+if (!dir.exists(file.path(lib, "CORAtool"))) {
+  cat("(the check did not install the package, so these cannot be read)\n")
+} else {
+  d <- packageDescription("CORAtool", lib.loc = lib)
+  descr <- gsub("\\s+", " ", d$Description)
+  title <- d$Title
+
+  ok1 <- !startsWith(tolower(descr), tolower(title)) &&
+         !grepl("^(this package|coratool|a package)", tolower(descr))
+  cat(sprintf("%-4s Description does not open with the title or package name\n",
+              if (ok1) "ok" else "FAIL"))
+  cat(sprintf("     starts: \"%s ...\"\n", substr(descr, 1, 60)))
+
+  expanded <- "insufficient but non-redundant part of an unnecessary but sufficient"
+  pos_long <- regexpr(expanded, descr, fixed = TRUE)
+  pos_acro <- regexpr("INUS", descr, fixed = TRUE)
+  ok2 <- pos_long > 0 && pos_acro > pos_long
+  cat(sprintf("%-4s INUS is spelled out before the acronym is used\n",
+              if (ok2) "ok" else "FAIL"))
+
+  ns <- loadNamespace("CORAtool", lib.loc = lib)
+  offenders <- Filter(function(f) {
+    obj <- get(f, envir = ns)
+    is.function(obj) && !startsWith(f, "print.") &&
+      grepl("\\b(cat|print|writeLines)\\(",
+            paste(deparse(body(obj)), collapse = "\n"))
+  }, ls(ns, all.names = TRUE))
+  ok3 <- length(offenders) == 0L &&
+         is.function(getS3method("print", "cora_comparison", envir = ns))
+  cat(sprintf("%-4s only print() methods write to the console\n",
+              if (ok3) "ok" else "FAIL"))
+  if (length(offenders))
+    cat("     offenders:", paste(offenders, collapse = ", "), "\n")
+}
+
