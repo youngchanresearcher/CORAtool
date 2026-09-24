@@ -26,6 +26,6 @@ Two examples use \dontrun{}: cora_python_available() and
 cora_compare_python(). Both can start Python through 'reticulate', and on a
 machine with no interpreter configured recent versions of 'reticulate'
 provision one at that moment, which cost 28 seconds of elapsed time and a
-network round trip when the examples were run normally. 'reticulate' is a
-Suggests used only for an optional cross-check; the package checks and tests
-fully without it.
+network round trip when the examples were run normally. 'reticulate' is
+listed in Suggests and used only for an optional cross-check; the package
+checks and tests fully without it.
