@@ -1,0 +1,31 @@
+This is a resubmission. In this version I have:
+
+* Rewritten the start of the Description so that it no longer begins with
+  the title, and explained the acronym INUS (insufficient but non-redundant
+  part of an unnecessary but sufficient condition) where it first appears.
+  CORA is explained as Combinational Regularity Analysis in the same
+  paragraph.
+
+* Removed the cat() calls from cora_compare_python() in R/reticulate.R. It
+  now returns an object of class 'cora_comparison' with a print() method, so
+  the report is written only when the object is printed. The remaining cat()
+  calls in the package are all inside print() methods. A test now checks
+  that no other function writes to the console.
+
+Unchanged from the first submission, for reference:
+
+Derivative work and licensing. The algorithms are ported from the Python
+packages CORA and LOGIGRAM (Sebechlebska, Mkrtchyan and Thiem,
+doi:10.21105/joss.05019), which are distributed under GPL-3. CORAtool is
+released under GPL (>= 3). The three original authors are listed in
+Authors@R as copyright holders, and inst/NOTICE records what derives from
+where. The four bundled data sets are the example data shipped with the
+Python package under the same licence.
+
+Two examples use \dontrun{}: cora_python_available() and
+cora_compare_python(). Both can start Python through 'reticulate', and on a
+machine with no interpreter configured recent versions of 'reticulate'
+provision one at that moment, which cost 28 seconds of elapsed time and a
+network round trip when the examples were run normally. 'reticulate' is
+listed in Suggests and used only for an optional cross-check; the package
+checks and tests fully without it.

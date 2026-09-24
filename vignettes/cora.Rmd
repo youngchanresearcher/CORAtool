@@ -1,0 +1,304 @@
+---
+title: "Combinational Regularity Analysis with CORAtool"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Combinational Regularity Analysis with CORAtool}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7,
+                      fig.height = 4.5)
+library(CORAtool)
+```
+
+## The question this method asks
+
+Most quantitative methods ask how much each variable contributes on average.
+Combinational Regularity Analysis asks a different question: which
+*combinations* of conditions are regularly followed by the outcome, allowing
+that several different combinations may each be enough on their own.
+
+Structures of that shape are called INUS structures: a condition that is
+**I**nsufficient on its own but a **N**ecessary part of a combination that is
+itself **U**nnecessary but **S**ufficient. Written out:
+
+```
+A{1}*B{0}*C{1} + D{1}*E{1}  =>  Y
+```
+
+Either "A is 1 and B is 0 and C is 1", or "D is 1 and E is 1", is enough for
+`Y`. Neither is required. Asking what "the effect of A" is has no answer
+here, because A only does anything alongside B and C.
+
+CORA belongs to the family of configurational comparative methods, alongside
+QCA and CNA. What distinguishes it is its starting point — switching circuit
+analysis — and two capabilities that follow from it: multi-value conditions,
+and *complex effects*, where several outcome columns are minimised jointly
+rather than one at a time.
+
+## The data
+
+A data frame, one row per case. Conditions must be non-negative integers
+**coded from zero upwards with no gaps**: `0, 1` for a binary condition,
+`0, 1, 2` for a three-valued one. `cora_recode()` will do that for you, and
+an analysis of data coded otherwise is refused rather than attempted — see
+*Coding* below for why that matters.
+
+```{r}
+df <- data.frame(A   = c(1, 0, 1, 0),
+                 B   = c(1, 0, 0, 1),
+                 C   = c(0, 1, 1, 0),
+                 OUT = c(1, 1, 0, 1))
+ctx <- cora_context(df, output_labels = "OUT")
+```
+
+`cora_context()` holds the data together with every analytical choice. It
+computes nothing on its own: the truth table, the prime implicants and the
+solutions are each derived on first request and kept afterwards.
+
+## Five stages
+
+```{r}
+cora_truth_table(ctx)
+```
+
+Cases sharing a combination of condition values are aggregated into one
+configuration. `n_cut` sets how many cases a configuration needs before it is
+believed, and `inc_score1` how consistently it must show the outcome to count
+as positive.
+
+```{r}
+cora_prime_implicants(ctx)
+```
+
+Boolean minimisation reduces the positive configurations to prime
+implicants — combinations that cannot be shortened without covering a
+negative case. A `#` marks an **essential** prime implicant: one that holds a
+positive case no other prime implicant reaches, so every solution must
+contain it.
+
+```{r}
+cora_pi_chart(ctx)
+```
+
+The chart says which prime implicant covers which positive row. Petrick's
+method then reads every irredundant solution off it — every combination that
+covers all positive rows and stops covering them all if any term is removed.
+
+```{r}
+cora_irredundant_sums(ctx)
+```
+
+## Reading the result
+
+Two solutions, not one. This is **model ambiguity**, and it is a property of
+the data rather than a failure of the analysis: on every configuration that
+was actually observed, these two make identical predictions. They differ only
+on configurations nobody observed.
+
+The honest response is to report both. Narrowing to one requires an argument
+from outside the data — theory, timing, a design that rules a combination
+out — because the data has already been used up.
+
+```{r}
+cora_pi_details(ctx)
+```
+
+| column | meaning |
+|---|---|
+| `Cov.r` | of all cases showing the outcome, the share this prime implicant covers |
+| `Inc.` | of the cases this prime implicant covers, the share showing the outcome |
+| `M1`, `M2` | within that solution, the share of positive cases **only** this term covers |
+| `NA` | this prime implicant is not in that solution |
+
+High inclusion means the combination is close to sufficient: when it holds,
+the outcome nearly always follows. High coverage means it explains much of
+what happened. They answer different questions, and a term with inclusion 1
+and coverage 0.05 is telling you it never misfires and almost never fires.
+
+A unique coverage of 0 is worth pausing on: that term covers nothing the
+others do not already cover. It is in the solution because removing it would
+break irredundance, not because it carries any case of its own.
+
+```{r}
+cora_system_details(ctx)
+cora_describe(cora_irredundant_sums(ctx)[[1]])
+```
+
+`cora_describe()` turns the scores into a relation: `=>` for sufficient, `<=`
+for necessary, `<=>` for both.
+
+## Multi-value conditions
+
+Nothing changes except the range of the values.
+
+```{r}
+tort <- cora_context(gross_carvin, "TORT", case_col = "Case",
+                     algorithm = "ON-OFF")
+cora_irredundant_sums(tort)
+```
+
+Every literal carries its value explicitly, binary conditions included:
+`LENG{2}` is "LENG equals 2", `PRIC{0}` is "PRIC equals 0". Literals inside a
+conjunction are written in alphabetical order of the condition, so the same
+analysis prints the same string however the columns were arranged.
+
+## Complex effects
+
+Several outcomes can be minimised jointly. The result is an irredundant
+*system*: one function per outcome, irredundant as a whole even where an
+individual function is not.
+
+```{r}
+minaret <- cora_context(swiss_minaret, c("X", "M"), algorithm = "ON-OFF")
+cora_irredundant_systems(minaret)[[1]]
+```
+
+`L{0}*T{0}` and `S{1}` serve both outcomes; `T{1}` serves only `M`. Which
+mechanisms are shared and which are particular to one outcome is the question
+complex effects exist to answer, and analysing each outcome separately cannot
+reach it.
+
+## Diagrams
+
+```{r, fig.alt = "Two-level logic diagram of the tort liability solution"}
+cora_logigram(cora_irredundant_sums(tort)[[1]])
+```
+
+Read it left to right. The vertical lines are condition buses, one per
+condition that appears in the solution. A dot on a bus is a literal, labelled
+with the value it takes. The yellow blocks are AND gates forming the
+conjunctions; a term of a single literal has nothing to combine and runs
+straight past them. The blue shield is the OR gate, and the name on its right
+is the outcome.
+
+The expression and its scores are printed above the drawing, so the figure
+and the formula travel together. `show_terms = TRUE` labels each gate with
+the conjunction it forms; `title` and `subtitle` take your own text, or `NA`
+for none.
+
+## Choosing the algorithm
+
+`"ON-DC"` is the classical Quine-McCluskey algorithm over positive and
+don't-care terms; `"ON-OFF"` is McCluskey's modified algorithm over positive
+and negative terms. On data coded from zero they return the same prime
+implicants.
+
+They do not cost the same. `"ON-DC"` expands the full configuration space, so
+its cost grows exponentially in the number of levels of a single condition:
+roughly a second at twelve levels, half a minute at eighteen, out of reach at
+thirty. `"ON-OFF"` works from the observed rows and answers in a fraction of
+a second at any size. **Prefer `"ON-OFF"` when a condition has many levels or
+there are many conditions.** A condition of more than twelve levels draws a
+warning saying so.
+
+## Coding
+
+Conditions must run `0, 1, 2, ...` because the algorithms take the number of
+distinct values as the range of values. A condition coded `{1, 2}` has two
+distinct values, so an implicant that does not mention it is filled in with
+`{0, 1}` — a set containing a value never observed and missing one that was.
+Cases are then dropped from coverage for no reason connected to the
+implicant.
+
+```{r, error = TRUE}
+gapped <- data.frame(A = c(1, 1, 0, 0), B = c(2, 1, 2, 2),
+                     OUT = c(1, 1, 0, 1))
+cora_prime_implicants(cora_context(gapped, "OUT"))
+```
+
+```{r}
+fixed <- cora_recode(gapped, "B")
+fixed
+```
+
+Recoding shifts the labels: `B{2}` becomes `B{1}`. The structure is
+unchanged, but a value in a write-up has to be read against the coding that
+produced it.
+
+## When there are too many solutions
+
+A chart with a few dozen prime implicants can have tens of thousands of
+irredundant solutions. Every one is valid, which is exactly the problem:
+nobody can report them all. It usually means too many conditions or too loose
+a threshold.
+
+`max_depth` asks a narrower question, and asks it of the search rather than
+of the finished list, which is often the difference between an answer and no
+answer:
+
+```{r}
+praet <- cora_context(bergschlosser, "PRAET",
+                      input_labels = c("AGRPOP", "PARCL", "APROG",
+                                       "PS", "RQ", "LRC"),
+                      case_col = "Case", inc_score1 = 0.6,
+                      algorithm = "ON-OFF")
+length(cora_irredundant_sums(praet, max_depth = 7))
+```
+
+Unrestricted, that analysis has 74,524 solutions and takes about half a
+minute; restricted to seven prime implicants it answers in a fraction of a
+second. The restriction applies to the call, not to the context, so a later
+unrestricted call still sees everything.
+
+## Searching for a smaller model
+
+`cora_data_mining()` runs the analysis over every combination of a given
+number of conditions, which is a configurational Occam's razor: how few
+conditions still generate a solution?
+
+```{r}
+cora_data_mining(mccluskey, c("F1", "F2"), len_of_tuple = 2)
+```
+
+`automatic = TRUE` widens the search one condition at a time until a
+combination yields a solution.
+
+## Relation to the Python implementation
+
+This package is an R port of the Python packages CORA and LOGIGRAM. It
+computes in plain R and needs no Python installation. Prime implicants,
+coverage sets and solution sets agree with the original across its own test
+data and 200 randomly generated data sets.
+
+It departs from the original in seven documented places. The departures that
+change numbers are: data not coded from zero is refused rather than analysed;
+an implicant's inclusion score is measured against the outcome it is an
+implicant of, so the two algorithms agree; and a tuple whose only solution is
+the tautology scores zero in data mining rather than a perfect one. Appendix A
+of the extended manual records each with its source location and a
+reproducible example, and the evidence behind the comparison is in
+`tools/VALIDATION.md` in the source repository.
+
+If the Python package is installed, `cora_compare_python()` will run both and
+compare them.
+
+## Caveats worth carrying
+
+- CORA finds **regularity structure in data**. Moving from there to a causal
+  claim needs what the method cannot supply: theory, timing, a design that
+  rules out common causes.
+- Limited diversity is the normal condition, not an edge case. With `k`
+  conditions there are at least `2^k` possible configurations and you will
+  have observed a small fraction. How much of a solution rests on
+  configurations nobody saw is yours to know and to say.
+- Coverage and inclusion are not p-values. There is no null hypothesis here
+  and no significance to report.
+- Report every solution, the algorithm, the thresholds, and what the values
+  of each condition mean. Without the last of these a reader cannot tell what
+  `LENG{2}` is a claim about.
+
+## Extended manual
+
+A fuller manual covers the theory, the output, the diagrams and the
+comparison with the Python implementation, QCA, QCApro and cna in more depth
+than this vignette. It ships in English and in Traditional Chinese:
+
+```r
+file.show(system.file("docs", "manual_en.md", package = "CORAtool"))
+file.show(system.file("docs", "manual_zh-TW.md", package = "CORAtool"))
+```
+
+`inst/examples/getting-started.R` is the same ground as a runnable script.

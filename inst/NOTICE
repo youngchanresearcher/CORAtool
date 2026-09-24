@@ -1,0 +1,31 @@
+CORAtool (R package)
+Copyright (C) 2026 Young Chan
+
+This package is a derivative work. Its algorithms are ported from the Python
+packages CORA and LOGIGRAM:
+
+  CORA      https://github.com/PoliUniLu/cora
+  LOGIGRAM  https://github.com/PoliUniLu/logigram
+
+  Copyright (C) Zuzana Sebechlebská, Lusine Mkrtchyan and Alrik Thiem
+  Licensed under the GNU General Public License v3.0 or later.
+
+This package is an independent implementation. It is not endorsed by the
+authors named above, who are credited here as the authors and copyright
+holders of the work it derives from.
+
+The Petrick solver follows the reference implementation in
+https://github.com/PoliUniLu/petric, which is distributed with CORA under the
+same licence.
+
+The bundled data sets swiss_minaret, gross_carvin, mccluskey and
+bergschlosser are the example data shipped with the Python CORA package.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
