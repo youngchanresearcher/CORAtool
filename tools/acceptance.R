@@ -1,5 +1,5 @@
 ## ---------------------------------------------------------------------------
-## CORAtool 0.1.1 acceptance test
+## CORAtool 0.1.2 acceptance test
 ##
 ## Run this after installing the package. It exercises every exported
 ## function, checks the behaviours introduced in 0.1.1, and confirms that the
@@ -62,8 +62,8 @@ hdr <- function(x) cat("\n== ", x, " ", strrep("=", max(0, 60 - nchar(x))),
 ## ---------------------------------------------------------------------------
 hdr("installation")
 
-chk("package version is 0.1.1",
-    { stopifnot(as.character(packageVersion("CORAtool")) == "0.1.1"); TRUE })
+chk("package version is 0.1.2",
+    { stopifnot(as.character(packageVersion("CORAtool")) == "0.1.2"); TRUE })
 chk("both manuals are installed",
     { f <- list.files(system.file("docs", package = "CORAtool"))
       stopifnot(all(c("manual_en.md", "manual_zh-TW.md") %in% f)); f })
@@ -72,7 +72,7 @@ chk("the vignette is registered",
       stopifnot("cora" %in% v[, "Item"]); v[, "Item"] })
 chk("citation() reports the installed version",
     { n <- citation("CORAtool")[[1]]$note
-      stopifnot(grepl("0.1.1", n)); n })
+      stopifnot(grepl("0.1.2", n)); n })
 chk("the runnable tour ships with the package",
     { f <- system.file("examples", "getting-started.R", package = "CORAtool")
       stopifnot(nzchar(f)); basename(f) })
@@ -391,8 +391,8 @@ if (!requireNamespace("testthat", quietly = TRUE)) {
   cat("skip testthat is not installed\n")
 } else if (!have_tests) {
   cat("skip the tests are not in this install.\n")
-  cat("     Install with tests:  R CMD INSTALL --install-tests CORAtool_0.1.1.tar.gz\n")
-  cat("     Or run them through: R CMD check CORAtool_0.1.1.tar.gz\n")
+  cat("     Install with tests:  R CMD INSTALL --install-tests CORAtool_0.1.2.tar.gz\n")
+  cat("     Or run them through: R CMD check CORAtool_0.1.2.tar.gz\n")
 } else {
   cat("running testthat::test_package(\"CORA\") ...\n")
   tt <- try(testthat::test_package("CORAtool", reporter = "silent"), silent = TRUE)

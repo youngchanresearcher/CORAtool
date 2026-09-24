@@ -1,3 +1,19 @@
+# CORAtool 0.1.2
+
+Changes asked for by CRAN on the first submission. No result changes.
+
+* `cora_compare_python()` no longer writes its report to the console while
+  it works. It returns an object of class `cora_comparison`, and printing that
+  object gives the report, which now also names the prime implicants and
+  solutions found by only one side when the two disagree. Assigning the
+  result keeps the console quiet. The fields `r`, `python` and `agrees` are
+  where they were.
+* The Description no longer opens with the title, and spells out INUS
+  (insufficient but non-redundant part of an unnecessary but sufficient
+  condition) where it first appears.
+* A test now fails if any function other than a `print()` method writes to
+  the console.
+
 # CORAtool 0.1.1
 
 **The package is now called `CORAtool`.** CRAN carries a package named

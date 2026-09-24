@@ -236,7 +236,7 @@ Cite this package, the method it implements, and the packages it was
 adapted from. `citation("CORAtool")` prints all three entries:
 
 > Chan, Y. (2026). *CORAtool: Combinational Regularity Analysis*. R package
-> version 0.1.0.
+> version 0.1.2.
 
 > Thiem, A., Mkrtchyan, L., & Sebechlebská, Z. (2022). Combinational
 > Regularity Analysis (CORA) - a new method for uncovering complex causation

@@ -6,13 +6,13 @@
 ##
 ##   source("diagnose-download.R")   # then follow the prompt
 ## or set the path directly:
-##   f <- "C:/Users/me/Downloads/CORAtool_0.1.1.tar.gz"; source("diagnose-download.R")
+##   f <- "C:/Users/me/Downloads/CORAtool_0.1.2.tar.gz"; source("diagnose-download.R")
 ## ---------------------------------------------------------------------------
 
 if (!exists("f") || !is.character(f) || !nzchar(f)) {
   f <- if (interactive()) file.choose() else
     stop("Set f to the path of the file first, e.g.\n",
-         '  f <- "C:/temp/CORAtool_0.1.1.tar.gz"')
+         '  f <- "C:/temp/CORAtool_0.1.2.tar.gz"')
 }
 
 say <- function(...) cat(..., "\n", sep = "")
@@ -23,7 +23,7 @@ line(); say("file: ", f); line()
 if (!file.exists(f)) {
   say("VERDICT: that path does not exist.")
   say("Check the spelling, and remember R wants forward slashes:")
-  say('  "C:/Users/you/Downloads/CORAtool_0.1.1.tar.gz"')
+  say('  "C:/Users/you/Downloads/CORAtool_0.1.2.tar.gz"')
 } else {
   info <- file.info(f)
   say("size on disk : ", format(info$size, big.mark = ","), " bytes")
@@ -32,7 +32,7 @@ if (!file.exists(f)) {
   if (grepl(" ", basename(f))) {
     say("")
     say("NOTE: the file name contains a space. The name it was built under is")
-    say("      CORAtool_0.1.1.tar.gz, with an underscore. A renamed file usually")
+    say("      CORAtool_0.1.2.tar.gz, with an underscore. A renamed file usually")
     say("      means the download altered it, so treat the contents as suspect.")
   }
 
@@ -107,8 +107,8 @@ if (!file.exists(f)) {
     say("plain before installing:")
     say("")
     say('  dir.create("C:/temp", showWarnings = FALSE)')
-    say('  file.copy(f, "C:/temp/CORAtool_0.1.1.tar.gz", overwrite = TRUE)')
-    say('  install.packages("C:/temp/CORAtool_0.1.1.tar.gz",')
+    say('  file.copy(f, "C:/temp/CORAtool_0.1.2.tar.gz", overwrite = TRUE)')
+    say('  install.packages("C:/temp/CORAtool_0.1.2.tar.gz",')
     say('                   repos = NULL, type = "source")')
   }
 }

@@ -10,7 +10,7 @@
 ## ---------------------------------------------------------------------------
 
 TARBALL <- file.path(Sys.getenv("USERPROFILE"), "OneDrive", "Desktop",
-                     "CORAtool_0.1.1.tar.gz")
+                     "CORAtool_0.1.2.tar.gz")
 WORKDIR <- "C:/coracheck"
 
 ## --- 1. put the tarball somewhere local -------------------------------------
